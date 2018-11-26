@@ -99,10 +99,16 @@ private fun buildTokensEncoderModel(
     EMBDLoader().load(filename = it)
   }
 
+  val preEmbeddingsMap2 = "lexical_similarity.vectors".let { // TODO
+    println("Loading pre-trained word embeddings from '$it'...")
+    EMBDLoader().load(filename = it)
+  }
+
   return TokensEncoderWrapperModel(
     model = EnsembleTokensEncoderModel(
       components = listOf(
         EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false),
+        EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap2, 0.0), trainable = false),
         EnsembleTokensEncoderModel.ComponentModel(buildCharLMEncoder(parsedArgs))),
       outputMergeConfiguration = AffineMerge(
         outputSize = parsedArgs.tokensEncodingSize,
