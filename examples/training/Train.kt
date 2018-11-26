@@ -99,7 +99,7 @@ private fun buildTokensEncoderModel(
     EMBDLoader().load(filename = it)
   }
 
-  val preEmbeddingsMap2 = "lexical_similarity.vectors".let { // TODO
+  val preEmbeddingsMap2 = "lexical_similarity.vectors".let {
     println("Loading pre-trained word embeddings from '$it'...")
     EMBDLoader().load(filename = it)
   }
