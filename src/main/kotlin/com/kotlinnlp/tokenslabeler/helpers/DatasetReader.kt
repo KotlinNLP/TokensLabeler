@@ -72,7 +72,7 @@ class DatasetReader(
       line.split("\t").let { Pair(it[0], it[1]) }
     }.unzip()
 
-    return AnnotatedSentence(forms.zip(getLabels(annotations)).map { (form, label) ->
+    return AnnotatedSentence(forms.zip(this.getLabels(annotations)).map { (form, label) ->
       AnnotatedToken(form, label)
     })
   }
@@ -92,6 +92,11 @@ class DatasetReader(
           prevTag = tags.getOrNull(i - 1),
           nextTag = tags.getOrNull(i + 1)),
         value = tags[i].replace(Regex("^B-|^I-|^O"), "")))
+    }
+
+    labels.zipWithNext { a, b ->
+      if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside)
+        a.value = b.value
     }
 
     return labels

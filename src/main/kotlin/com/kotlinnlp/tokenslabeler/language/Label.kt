@@ -15,7 +15,7 @@ import java.io.Serializable
  * @property type the BIEOU tag
  * @property value the name of the label (e.g. "PER", "LOC", "ORG")
  */
-data class Label(val type: BIEOUTag, val value: String) : Serializable {
+data class Label(var type: BIEOUTag, var value: String) : Serializable {
 
   companion object {
 
