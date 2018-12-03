@@ -104,12 +104,12 @@ class CommandLineArguments(args: Array<String>) {
   )
 
   /**
-   * The file path of the pre-trained word embeddings.
+   * The directory which contains pre-trained word embeddings.
    */
-  val embeddingsPath: String? by parser.storing(
+  val embeddingsDirname: String? by parser.storing(
     "-w",
-    "--trained-word-emb-path",
-    help="the file path of the pre-trained word embeddings"
+    "--word-emb-dir",
+    help="the directory which contains pre-trained word embeddings"
   ).default { null }
 
   /**

@@ -94,26 +94,32 @@ private fun buildTokensEncoderModel(
   parsedArgs: CommandLineArguments
 ): TokensEncoderModel<BaseToken, BaseSentence> {
 
-  val preEmbeddingsMap = parsedArgs.embeddingsPath!!.let {
-    println("Loading pre-trained word embeddings from '$it'...")
-    EMBDLoader().load(filename = it)
-  }
-
-  val preEmbeddingsMap2 = "lexical_similarity.vectors".let {
-    println("Loading pre-trained word embeddings from '$it'...")
-    EMBDLoader().load(filename = it)
-  }
-
   return TokensEncoderWrapperModel(
     model = EnsembleTokensEncoderModel(
-      components = listOf(
-        EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false),
-        EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap2, 0.0), trainable = false),
-        EnsembleTokensEncoderModel.ComponentModel(buildCharLMEncoder(parsedArgs))),
+      components = loadEmbeddingsMaps(parsedArgs.embeddingsDirname!!).map { preEmbeddingsMap ->
+        EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false)
+      } + EnsembleTokensEncoderModel.ComponentModel(buildCharLMEncoder(parsedArgs)),
       outputMergeConfiguration = AffineMerge(
         outputSize = parsedArgs.tokensEncodingSize,
         activationFunction = null)),
     converter = MirrorConverter())
+}
+
+/**
+ * @param embeddingsDirname the directory containing the embeddings vectors files
+ */
+fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionary> {
+
+  println("Loading embeddings from '$embeddingsDirname'")
+  val embeddingsDir = File(embeddingsDirname)
+
+  require(embeddingsDir.isDirectory) { "$embeddingsDirname is not a directory" }
+
+  return embeddingsDir.listFilesOrRaise().map { embeddingsFile ->
+
+    println("Loading pre-trained word embeddings from '${embeddingsFile.name}'...")
+    EMBDLoader(verbose = true).load(embeddingsFile.absolutePath.toString())
+  }
 }
 
 /**
@@ -122,7 +128,7 @@ private fun buildTokensEncoderModel(
  *
  * @return the tokens encoder that works on the [embeddingsMap]
  */
-fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMapByDictionary, dropout: Double) = TokensEncoderWrapperModel(
+fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMapByDictionary, dropout: Double) = TokensEncoderWrapperModel (
   model = EmbeddingsEncoderModel(
     embeddingsMap = embeddingsMap,
     embeddingKeyExtractor = WordKeyExtractor(),
@@ -140,3 +146,12 @@ fun buildCharLMEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperM
     revCharLM = CharLM.load(FileInputStream(File(parsedArgs.revCharModelPath))),
     outputMergeConfiguration = ConcatMerge()),
   converter = FormConverter())
+
+/**
+ * @throws RuntimeException if the file of this directory is empty
+ *
+ * @return the list of files contained in this directory if it is not empty, otherwise an exception is raised
+ */
+private fun File.listFilesOrRaise(): Array<File> = this.listFiles().let {
+  if (it.isNotEmpty()) it else throw RuntimeException("Empty directory.")
+}
