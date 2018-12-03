@@ -19,6 +19,7 @@ import com.kotlinnlp.simplednn.core.layers.models.merge.mergeconfig.ConcatMerge
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
 import com.kotlinnlp.tokensencoder.charlm.CharLMEncoderModel
 import com.kotlinnlp.tokensencoder.embeddings.EmbeddingsEncoderModel
+import com.kotlinnlp.tokensencoder.embeddings.keyextractor.NormWordKeyExtractor
 import com.kotlinnlp.tokensencoder.embeddings.keyextractor.WordKeyExtractor
 import com.kotlinnlp.tokensencoder.ensemble.EnsembleTokensEncoderModel
 import com.kotlinnlp.tokensencoder.wrapper.MirrorConverter
@@ -132,6 +133,7 @@ fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMapByDictionary, dropout: Do
   model = EmbeddingsEncoderModel(
     embeddingsMap = embeddingsMap,
     embeddingKeyExtractor = WordKeyExtractor(),
+    fallbackEmbeddingKeyExtractors = listOf(NormWordKeyExtractor()),
     dropoutCoefficient = dropout),
   converter = BaseConverter())
 
