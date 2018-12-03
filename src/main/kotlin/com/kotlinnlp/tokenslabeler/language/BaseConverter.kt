@@ -8,13 +8,13 @@
 package com.kotlinnlp.tokenslabeler.language
 
 import com.kotlinnlp.linguisticdescription.sentence.Sentence
-import com.kotlinnlp.linguisticdescription.sentence.token.Token
+import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
 import com.kotlinnlp.tokensencoder.wrapper.SentenceConverter
 
 /**
  * The sentence converter from a [BaseSentence] to a generic [Sentence].
  */
-class BaseConverter : SentenceConverter<BaseToken, BaseSentence, Token, Sentence<Token>> {
+class BaseConverter : SentenceConverter<BaseToken, BaseSentence, FormToken, Sentence<FormToken>> {
 
   companion object {
 
@@ -33,5 +33,5 @@ class BaseConverter : SentenceConverter<BaseToken, BaseSentence, Token, Sentence
    * @return the converted sentence
    */
   @Suppress("UNCHECKED_CAST")
-  override fun convert(sentence: BaseSentence): Sentence<Token> = sentence as Sentence<Token>
+  override fun convert(sentence: BaseSentence): Sentence<FormToken> = sentence as Sentence<FormToken>
 }
