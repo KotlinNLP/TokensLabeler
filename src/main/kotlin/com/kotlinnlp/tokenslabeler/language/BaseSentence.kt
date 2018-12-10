@@ -19,5 +19,7 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
   /**
    * @param sentence an annotated sentence
    */
-  constructor(sentence: AnnotatedSentence) : this(tokens = sentence.tokens.map { BaseToken(form = it.form) })
+  constructor(sentence: AnnotatedSentence) : this(
+    sentence.tokens.map { BaseToken(form = it.form, position = it.position) }
+  )
 }
