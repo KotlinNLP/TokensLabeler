@@ -8,6 +8,7 @@
 package com.kotlinnlp.tokenslabeler.language
 
 import com.kotlinnlp.linguisticdescription.sentence.Sentence
+import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
 /**
  * A base sentence.
@@ -22,4 +23,31 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
   constructor(sentence: AnnotatedSentence) : this(
     sentence.tokens.map { BaseToken(form = it.form, position = it.position) }
   )
+
+  companion object {
+
+    /**
+     * Construct a [BaseSentence] from a list of tokens forms.
+     *
+     * @param forms list of tokens forms
+     *
+     * @return a new [BaseSentence]
+     */
+    operator fun invoke(forms: List<String>): BaseSentence {
+
+      var end = -2
+
+      return BaseSentence(tokens = forms.mapIndexed { i, it ->
+
+        val start = end + 2 // each couple of consecutive tokens is separated by a spacing char
+        end = start + it.length - 1
+
+        BaseToken(
+          form = it,
+          position = Position(index = i, start = start, end = end)
+        )
+      }
+      )
+    }
+  }
 }
