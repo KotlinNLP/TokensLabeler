@@ -104,6 +104,15 @@ class CommandLineArguments(args: Array<String>) {
   )
 
   /**
+   * The file path of the serialized gazetteers dictionary.
+   */
+  val gazetteersPath: String? by parser.storing(
+    "-g",
+    "--gazetteers",
+    help="the file path of the serialized gazetteers"
+  ).default { null }
+
+  /**
    * The directory which contains pre-trained word embeddings.
    */
   val embeddingsDirname: String? by parser.storing(
