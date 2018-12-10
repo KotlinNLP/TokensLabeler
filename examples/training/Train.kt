@@ -9,6 +9,7 @@ package training
 
 import com.kotlinnlp.languagemodel.CharLM
 import com.kotlinnlp.linguisticdescription.language.getLanguageByIso
+import com.kotlinnlp.morphologicalanalyzer.dictionary.MorphologyDictionary
 import com.kotlinnlp.simplednn.core.embeddings.EMBDLoader
 import com.kotlinnlp.simplednn.core.embeddings.EmbeddingsMapByDictionary
 import com.kotlinnlp.simplednn.core.functionalities.activations.Tanh
@@ -25,6 +26,7 @@ import com.kotlinnlp.tokensencoder.ensemble.EnsembleTokensEncoderModel
 import com.kotlinnlp.tokensencoder.wrapper.MirrorConverter
 import com.kotlinnlp.tokensencoder.wrapper.TokensEncoderWrapperModel
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
+import com.kotlinnlp.tokenslabeler.gazetteers.GazetteersEncoderModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
 import com.kotlinnlp.tokenslabeler.helpers.SchemeConverter
 import com.kotlinnlp.tokenslabeler.helpers.Trainer
@@ -95,11 +97,16 @@ private fun buildTokensEncoderModel(
   parsedArgs: CommandLineArguments
 ): TokensEncoderModel<BaseToken, BaseSentence> {
 
+  val embeddingsEncoders = loadEmbeddingsMaps(parsedArgs.embeddingsDirname!!).map { preEmbeddingsMap ->
+    EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false)
+  }
+
+  val charLMEncoder = EnsembleTokensEncoderModel.ComponentModel(buildCharLMEncoder(parsedArgs))
+  val gazetteersEncoder = EnsembleTokensEncoderModel.ComponentModel(buildGazetteersEncoder(parsedArgs))
+
   return TokensEncoderWrapperModel(
     model = EnsembleTokensEncoderModel(
-      components = loadEmbeddingsMaps(parsedArgs.embeddingsDirname!!).map { preEmbeddingsMap ->
-        EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false)
-      } + EnsembleTokensEncoderModel.ComponentModel(buildCharLMEncoder(parsedArgs)),
+      components =  embeddingsEncoders + charLMEncoder + gazetteersEncoder,
       outputMergeConfiguration = AffineMerge(
         outputSize = parsedArgs.tokensEncodingSize,
         activationFunction = null)),
@@ -135,7 +142,7 @@ fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMapByDictionary, dropout: Do
     embeddingKeyExtractor = WordKeyExtractor(),
     fallbackEmbeddingKeyExtractors = listOf(NormWordKeyExtractor()),
     dropoutCoefficient = dropout),
-  converter = BaseConverter())
+  converter = FormConverter())
 
 /**
  * @param parsedArgs the parsed command line arguments
@@ -148,6 +155,21 @@ fun buildCharLMEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperM
     revCharLM = CharLM.load(FileInputStream(File(parsedArgs.revCharModelPath))),
     outputMergeConfiguration = ConcatMerge()),
   converter = FormConverter())
+
+/**
+ * @param parsedArgs the parsed command line arguments
+ *
+ * @return the tokens encoder that uses the gazetteers
+ */
+fun buildGazetteersEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperModel(
+  model = GazetteersEncoderModel(
+    tokenEncodingSize = parsedArgs.tokensEncodingSize,
+    activation = Tanh(),
+    gazetteers = parsedArgs.gazetteersPath?.let {
+      println("Loading serialized gazetteers from '$it'...")
+      MorphologyDictionary.load(FileInputStream(File(it)))
+    }!!),
+  converter = MirrorConverter<BaseToken, BaseSentence>())
 
 /**
  * @throws RuntimeException if the file of this directory is empty
