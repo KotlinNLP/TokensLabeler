@@ -9,6 +9,7 @@ package com.kotlinnlp.tokenslabeler.gazetteers
 
 import com.kotlinnlp.linguisticdescription.sentence.MorphoSentence
 import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
+import com.kotlinnlp.morphologicalanalyzer.dictionary.MorphologyDictionary
 import com.kotlinnlp.simplednn.core.functionalities.activations.ActivationFunction
 import com.kotlinnlp.simplednn.core.functionalities.initializers.GlorotInitializer
 import com.kotlinnlp.simplednn.core.functionalities.initializers.Initializer
@@ -22,13 +23,15 @@ import com.kotlinnlp.tokensencoder.TokensEncoderModel
  * @property tokenEncodingSize the size of the token encoding vectors.
  * @param activation the activation function of the dense transformation
  * @param weightsInitializer the initializer of the weights (zeros if null, default: Glorot)
- * @param biasesInitializer the initializer of the biases (zeros if null, default: Glorot)
+ * @param biasesInitializer the initializer of the biases (zeros if null, default: null)
+ * @property gazetteers the gazetteers dictionary
  */
 class GazetteersEncoderModel(
   override val tokenEncodingSize: Int,
   activation: ActivationFunction?,
   weightsInitializer: Initializer? = GlorotInitializer(),
-  biasesInitializer: Initializer? = null
+  biasesInitializer: Initializer? = null,
+  internal val gazetteers: MorphologyDictionary
 ) : TokensEncoderModel<FormToken, MorphoSentence<FormToken>> {
 
   companion object {
