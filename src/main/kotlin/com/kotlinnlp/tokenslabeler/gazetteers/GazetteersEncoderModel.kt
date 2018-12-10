@@ -46,7 +46,7 @@ class GazetteersEncoderModel(
   /**
    * The input size of the [denseEncoder].
    */
-  internal val inputSize: Int = 3 * 4 + 1 // (PER, LOC, ORG) * (B, I, E, U) + O
+  internal val inputSize: Int = 13 // See [com.kotlinnlp.tokenslabeler.gazetteers.GazetteersEncoder.EntityType]
 
   /**
    * The model of the feed-forward Network used to transform the input from sparse to dense
