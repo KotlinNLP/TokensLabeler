@@ -7,11 +7,13 @@
 
 package com.kotlinnlp.tokenslabeler.gazetteers
 
+import com.kotlinnlp.linguisticdescription.language.Language
 import com.kotlinnlp.linguisticdescription.morphology.MorphologicalAnalysis
 import com.kotlinnlp.linguisticdescription.morphology.Morphology
 import com.kotlinnlp.linguisticdescription.morphology.POS
-import com.kotlinnlp.linguisticdescription.sentence.MorphoSentence
-import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
+import com.kotlinnlp.linguisticdescription.sentence.Sentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
+import com.kotlinnlp.morphologicalanalyzer.MorphologicalAnalyzer
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.core.neuralprocessor.batchfeedforward.BatchFeedforwardProcessor
 import com.kotlinnlp.simplednn.simplemath.ndarray.Shape
@@ -20,7 +22,8 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.sparsebinary.SparseBinaryNDArr
 import com.kotlinnlp.simplednn.simplemath.ndarray.sparsebinary.SparseBinaryNDArrayFactory
 import com.kotlinnlp.tokensencoder.TokensEncoder
 import com.kotlinnlp.tokensencoder.TokensEncoderParameters
-import com.kotlinnlp.tokensencoder.morpho.MorphoEncoderParams
+import com.kotlinnlp.tokenslabeler.language.BaseSentence
+import com.kotlinnlp.tokenslabeler.language.BaseToken
 import java.lang.RuntimeException
 
 /**
@@ -34,7 +37,7 @@ class GazetteersEncoder(
   override val model: GazetteersEncoderModel,
   override val useDropout: Boolean,
   override val id: Int = 0
-) : TokensEncoder<FormToken, MorphoSentence<FormToken>>(model) {
+) : TokensEncoder<BaseToken, BaseSentence>(model) {
 
   /**
    * The position of a token within an entity.
@@ -123,6 +126,13 @@ class GazetteersEncoder(
   }
 
   /**
+   * The morphological analyzer that works with the gazetteers dictionary.
+   */
+  private val analyzer = MorphologicalAnalyzer(
+    language = with(this.model.gazetteers) { if (language == Language.Unknown) Language.English else language },
+    dictionary = this.model.gazetteers)
+
+  /**
    * The feed-forward network used to transform the input from sparse to dense.
    */
   private val encoder = BatchFeedforwardProcessor<SparseBinaryNDArray>(
@@ -137,10 +147,13 @@ class GazetteersEncoder(
    *
    * @return a list of dense encoded representations of the given sentence tokens
    */
-  override fun forward(input: MorphoSentence<FormToken>): List<DenseNDArray> {
+  override fun forward(input: BaseSentence): List<DenseNDArray> {
+
+    @Suppress("UNCHECKED_CAST")
+    val analysis = this.analyzer.analyze(input as Sentence<RealToken>)
 
     val entitiesFeatures: List<SparseBinaryNDArray> =
-      this.convertToBinaryFeatures(entities = this.getEntities(input), sentenceSize = input.tokens.size)
+      this.convertToBinaryFeatures(entities = this.getEntities(analysis), sentenceSize = input.tokens.size)
 
     return this.encoder.forward(entitiesFeatures)
   }
@@ -158,7 +171,7 @@ class GazetteersEncoder(
    * @return the errors of the model parameters
    */
   override fun getParamsErrors(copy: Boolean): TokensEncoderParameters =
-    MorphoEncoderParams(parameters = this.encoder.getParamsErrors(copy = copy))
+    GazetteersEncoderParams(parameters = this.encoder.getParamsErrors(copy = copy))
 
   /**
    * @param copy whether to return by value or by reference
@@ -173,13 +186,11 @@ class GazetteersEncoder(
    * In case the length is the same, the entity with max priority is kept, following this order of importance: LOC, PER,
    * ORG.
    *
-   * @param sentence a morpho sentence
+   * @param analysis the morphological analysis
    *
    * @return the list of entities defined in the given sentence
    */
-  private fun getEntities(sentence: MorphoSentence<FormToken>): List<EntityInfo> {
-
-    val analysis: MorphologicalAnalysis = sentence.morphoAnalysis!!
+  private fun getEntities(analysis: MorphologicalAnalysis): List<EntityInfo> {
 
     val entities: List<EntityInfo> = analysis.multiWords
       .mapNotNull { it.morphologies.toEntity(tokensRange = it.startToken..it.endToken) }
