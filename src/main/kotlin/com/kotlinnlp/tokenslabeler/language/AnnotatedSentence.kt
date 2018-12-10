@@ -10,7 +10,7 @@ package com.kotlinnlp.tokenslabeler.language
 import com.kotlinnlp.linguisticdescription.sentence.Sentence
 
 /**
- * A base sentence.
+ * The annotated sentence.
  *
  * @property tokens the list of tokens that compose the sentence
  */
