@@ -7,6 +7,8 @@
 
 package test
 
+import com.kotlinnlp.neuraltokenizer.NeuralTokenizer
+import com.kotlinnlp.neuraltokenizer.NeuralTokenizerModel
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.*
@@ -14,28 +16,44 @@ import java.io.File
 import java.io.FileInputStream
 
 /**
- * Test the [TokensLabelerModel].
+ * Analyze the morphology of a text.
+ *
+ * Command line arguments:
+ *   1. The iso-a2 code of the language in which to analyze the input
+ *   2. The file path of the tokenizer serialized model.
+ *   3. The file path of the serialized morphology dictionary.
  */
 fun main(args: Array<String>) {
 
-  println("Loading model \"${args[0]}\"...")
+  require(args.size == 2) {
+    "Required 2 arguments: <tokenizer_model_filename> <labeler_model_filename>."
+  }
 
-  val labeler = TokensLabeler(TokensLabelerModel.load(FileInputStream(File(args[0]))))
+  val tokenizer: NeuralTokenizer = args[0].let {
+    println("Loading tokenizer model from '$it'...")
+    NeuralTokenizer(NeuralTokenizerModel.load(FileInputStream(File(it))))
+  }
+
+  println("Loading model \"${args[1]}\"...")
+
+  val labeler = TokensLabeler(TokensLabelerModel.load(FileInputStream(File(args[1]))))
 
   while (true) {
 
     val inputText = readValue()
 
     if (inputText.isEmpty()) {
-
       break
 
     } else {
 
-      val sentence = BaseSentence(tokens = inputText.split(" ").map { BaseToken(it) }) // TODO: use the NeuralTokenizer
+      tokenizer.tokenize(inputText).forEach { s ->
 
-      sentence.tokens.zip(labeler.predict(sentence)).forEach { (token, label) ->
-        println("${token.form}\t$label")
+        val sentence = BaseSentence(tokens = s.tokens.map { BaseToken(form = it.form, position = it.position) })
+
+        sentence.tokens.zip(labeler.predict(sentence)).forEach { (token, label) ->
+          println("${token.form}\t$label")
+        }
       }
     }
   }
@@ -50,7 +68,7 @@ fun main(args: Array<String>) {
  */
 private fun readValue(): String {
 
-  print("\nType the beginning of the sequence. Even a single character (empty to exit): ")
+  print("\nAnalyze a text (empty to exit): ")
 
   return readLine()!!
 }
