@@ -72,8 +72,8 @@ class DatasetReader(
       line.split("\t").let { Pair(it[0], it[1]) }
     }.unzip()
 
-    return AnnotatedSentence(forms.zip(this.getLabels(annotations)).map { (form, label) ->
-      AnnotatedToken(form, label)
+    return AnnotatedSentence(BaseSentence(forms).tokens.zip(this.getLabels(annotations)).map { (token, label) ->
+      AnnotatedToken(form = token.form, position = token.position, label = label)
     })
   }
 
