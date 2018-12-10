@@ -8,13 +8,18 @@
 package com.kotlinnlp.tokenslabeler.language
 
 import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
+import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
 /**
  * A base form token.
  *
  * @property form the form of the token
+ * @property position the position of the token in the original text
  */
 data class AnnotatedToken(
   override val form: String,
+  override val position: Position,
   val label: Label
-) : FormToken
+) : RealToken, FormToken
+
