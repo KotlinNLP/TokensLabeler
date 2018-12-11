@@ -163,7 +163,7 @@ fun buildCharLMEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperM
  */
 fun buildGazetteersEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperModel(
   model = GazetteersEncoderModel(
-    tokenEncodingSize = parsedArgs.tokensEncodingSize,
+    tokenEncodingSize = 25,
     activation = Tanh(),
     gazetteers = parsedArgs.gazetteersPath?.let {
       println("Loading serialized gazetteers from '$it'...")
