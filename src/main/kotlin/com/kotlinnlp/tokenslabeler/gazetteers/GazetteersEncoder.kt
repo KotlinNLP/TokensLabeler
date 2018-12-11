@@ -130,7 +130,9 @@ class GazetteersEncoder(
    */
   private val analyzer = MorphologicalAnalyzer(
     language = with(this.model.gazetteers) { if (language == Language.Unknown) Language.English else language },
-    dictionary = this.model.gazetteers)
+    dictionary = this.model.gazetteers,
+    processDateTimes = false,
+    processNumbers = false)
 
   /**
    * The feed-forward network used to transform the input from sparse to dense.
