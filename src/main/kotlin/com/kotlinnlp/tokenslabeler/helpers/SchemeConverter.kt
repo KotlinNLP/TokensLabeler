@@ -26,7 +26,7 @@ sealed class SchemeConverter {
   /**
    * The BIO to BIEOU converter.
    */
-  class BioToBieou(): SchemeConverter() {
+  object BioToBieou: SchemeConverter() {
 
     /**
      * @param tag the current tag
@@ -58,7 +58,7 @@ sealed class SchemeConverter {
   /**
    * The BIO to IOE2 converter.
    */
-  class BioToIoe2: SchemeConverter() {
+  object BioToIoe2: SchemeConverter() {
 
     /**
      * @param tag the current tag
@@ -89,7 +89,7 @@ sealed class SchemeConverter {
   /**
    * The BIO to IOE1 converter.
    */
-  class BioToIoe1: SchemeConverter() {
+  object BioToIoe1: SchemeConverter() {
 
     /**
      * @param tag the current tag
@@ -120,7 +120,7 @@ sealed class SchemeConverter {
   /**
    * The BIO converter.
    */
-  class Bio: SchemeConverter() {
+  object Bio: SchemeConverter() {
 
     /**
      * @param tag the current tag
