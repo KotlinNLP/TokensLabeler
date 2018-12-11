@@ -45,7 +45,7 @@ fun main(args: Array<String>) = mainBody {
 
   val parsedArgs = CommandLineArguments(args)
 
-  val tagConverter = SchemeConverter.BioToIoe2()
+  val tagConverter = SchemeConverter.BioToIoe2
 
   val trainingSentences: List<AnnotatedSentence> = DatasetReader(
     type = "training",
