@@ -16,7 +16,7 @@ import java.io.File
 import java.io.FileInputStream
 
 /**
- * Analyze the morphology of a text.
+ * Simple example to try the labeler with sentences entered from the keyboard.
  *
  * Command line arguments:
  *   1. The iso-a2 code of the language in which to analyze the input
