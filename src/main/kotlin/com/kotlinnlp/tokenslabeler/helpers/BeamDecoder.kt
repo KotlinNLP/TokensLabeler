@@ -40,7 +40,8 @@ internal class BeamDecoder(
     /**
      * @return the map of element ids associated to their possible values, sorted by descending score
      */
-    private fun getValuesMap(predictions: List<DenseNDArray>, outputLabels: DictionarySet<Label>): Map<Int, List<ScoredLabel>> {
+    private fun getValuesMap(predictions: List<DenseNDArray>,
+                             outputLabels: DictionarySet<Label>): Map<Int, List<ScoredLabel>> {
 
       return predictions.indices.associate { tokenIndex ->
 
