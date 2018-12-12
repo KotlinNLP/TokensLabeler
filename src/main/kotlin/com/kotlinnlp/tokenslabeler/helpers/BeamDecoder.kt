@@ -63,7 +63,7 @@ internal class BeamDecoder(
     private val validSequences = mapOf(
       BIEOUTag.Inside to setOf(null, BIEOUTag.Outside, BIEOUTag.Inside, BIEOUTag.End),
       BIEOUTag.End to setOf(BIEOUTag.Inside),
-      BIEOUTag.Outside to setOf(null, BIEOUTag.Outside, BIEOUTag.End))
+      BIEOUTag.Outside to setOf(null, BIEOUTag.Outside, BIEOUTag.Inside, BIEOUTag.End))
 
     /**
      * @param prevLabel the previous label
