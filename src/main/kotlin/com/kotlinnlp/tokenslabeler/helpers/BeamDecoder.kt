@@ -71,7 +71,7 @@ internal class BeamDecoder(
      */
     private fun canFollow(curLabel: Label, prevLabel: Label?): Boolean =
       validSequences.getValue(curLabel.type).contains(prevLabel?.type) &&
-      (prevLabel == null ||  curLabel.type == BIEOUTag.Outside || prevLabel.value == curLabel.value)
+      (prevLabel == null || curLabel.type == BIEOUTag.Outside || prevLabel.value == curLabel.value)
   }
 
   /**
