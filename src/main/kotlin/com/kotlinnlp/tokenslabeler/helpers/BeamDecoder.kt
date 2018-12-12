@@ -46,7 +46,7 @@ internal class BeamDecoder(
 
         val threshold: Double = 1.0 / predictions[tokenIndex].length // it is the distribution mean
 
-        val sortedLabels = predictions[tokenIndex].argSort(reverse = true).map {
+        val sortedLabels = predictions[tokenIndex].argSorted(reverse = true).map {
           ScoredLabel(label = outputLabels.getElement(it)!!, score = predictions[tokenIndex][it])
         }
 
