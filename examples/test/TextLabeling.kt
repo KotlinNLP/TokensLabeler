@@ -16,12 +16,11 @@ import java.io.File
 import java.io.FileInputStream
 
 /**
- * Simple example to try the labeler with sentences entered from the keyboard.
+ * A simple example to get the labeling of a text entered from the standard input.
  *
  * Command line arguments:
- *   1. The iso-a2 code of the language in which to analyze the input
- *   2. The file path of the tokenizer serialized model.
- *   3. The file path of the serialized morphology dictionary.
+ *   1. The file path of the tokenizer serialized model.
+ *   2. The file path of the labeler serialized model.
  */
 fun main(args: Array<String>) {
 
