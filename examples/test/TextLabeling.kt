@@ -67,7 +67,7 @@ fun main(args: Array<String>) {
  */
 private fun readValue(): String {
 
-  print("\nAnalyze a text (empty to exit): ")
+  print("\nLabel a text (empty to exit): ")
 
   return readLine()!!
 }
