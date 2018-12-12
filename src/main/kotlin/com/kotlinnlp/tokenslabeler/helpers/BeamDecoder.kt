@@ -93,7 +93,7 @@ internal class BeamDecoder(
     /**
      * The global score of the state.
      */
-    override val score: Double get() = elements.map { it.value.score }.average()
+    override val score: Double = elements.asSequence().map { it.value.score }.average()
 
     /**
      * Whether the state contains a correct sequence according to the constraints of the chosen BIEOU annotation schema.
