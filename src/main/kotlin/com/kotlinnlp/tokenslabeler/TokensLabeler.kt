@@ -10,6 +10,7 @@ package com.kotlinnlp.tokenslabeler
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
+import com.kotlinnlp.tokenslabeler.helpers.BeamDecoder
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.Label
 
@@ -51,14 +52,20 @@ class TokensLabeler(
     propagateToInput = true)
 
   /**
-   * TODO: permit only valid sequences accordingly to the chosen annotation schema
-   *
    * @param input the sentence
    *
    * @return a list of labels, one for each token of the sentence
    */
-  fun predict(input: BaseSentence): List<Label> = this.forward(input).map {
-    this.model.outputLabels.getElement(it.argMaxIndex())!!
+  fun predict(input: BaseSentence): List<Label> {
+
+    val decoder = BeamDecoder(
+      predictions = this.forward(input),
+      model = this.model,
+      maxBeamSize = 3,
+      maxForkSize = 5,
+      maxIterations = 10)
+
+    return decoder.findBestConfiguration(onlyValid = false)!!.sequence // TODO: allow only valid configurations?
   }
 
   /**
