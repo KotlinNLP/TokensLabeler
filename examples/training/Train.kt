@@ -106,7 +106,7 @@ private fun buildTokensEncoderModel(
 
   return TokensEncoderWrapperModel(
     model = EnsembleTokensEncoderModel(
-      components =  embeddingsEncoders + charLMEncoder + gazetteersEncoder,
+      components = embeddingsEncoders + charLMEncoder + gazetteersEncoder,
       outputMergeConfiguration = AffineMerge(
         outputSize = parsedArgs.tokensEncodingSize,
         activationFunction = null)),
@@ -161,15 +161,16 @@ fun buildCharLMEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperM
  *
  * @return the tokens encoder that uses the gazetteers
  */
-fun buildGazetteersEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperModel(
-  model = GazetteersEncoderModel(
-    tokenEncodingSize = 25,
-    activation = Tanh(),
-    gazetteers = parsedArgs.gazetteersPath?.let {
-      println("Loading serialized gazetteers from '$it'...")
-      MorphologyDictionary.load(FileInputStream(File(it)))
-    }!!),
-  converter = MirrorConverter<BaseToken, BaseSentence>())
+fun buildGazetteersEncoder(parsedArgs: CommandLineArguments) =
+  TokensEncoderWrapperModel<BaseToken, BaseSentence, BaseToken, BaseSentence>(
+    model = GazetteersEncoderModel(
+      tokenEncodingSize = 25,
+      activation = Tanh(),
+      gazetteers = parsedArgs.gazetteersPath?.let {
+        println("Loading serialized gazetteers from '$it'...")
+        MorphologyDictionary.load(FileInputStream(File(it)))
+      }!!),
+    converter = MirrorConverter())
 
 /**
  * @throws RuntimeException if the file of this directory is empty
