@@ -65,7 +65,12 @@ class TokensLabeler(
       maxForkSize = 5,
       maxIterations = 10)
 
-    return decoder.findBestConfiguration(onlyValid = false)!!.sequence // TODO: allow only valid configurations?
+    return decoder.findBestConfiguration(onlyValid = false)!!
+      .elements
+      .asSequence()
+      .sortedBy { it.id }
+      .map { it.value.label }
+      .toList()
   }
 
   /**

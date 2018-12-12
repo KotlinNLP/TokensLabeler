@@ -98,31 +98,10 @@ internal class BeamDecoder(
     /**
      * Whether the state contains a correct sequence according to the constraints of the chosen BIEOU annotation schema.
      */
-    override var isValid: Boolean = true
-
-    /**
-     * The sequence of labels.
-     */
-    val sequence: List<Label>
-
-    /**
-     * Initialize the sequence.
-     */
-    init {
-
-      var prevLabel: Label? = null
-
-      this.sequence = this.elements.indices.map { tokenIndex ->
-
-        val curLabel = this.getElement(tokenIndex).value.label
-
-        if (!canFollow(curLabel, prevLabel))
-          this.isValid = false // TODO: break
-
-        prevLabel = curLabel
-        curLabel
-      }
-    }
+    override var isValid: Boolean =
+      sequenceOf(null).plus(this.elements.indices.asSequence().map { i -> this.getElement(i).value.label })
+        .zipWithNext()
+        .all { canFollow(prevLabel = it.first, curLabel = it.second!!) }
   }
 
   /**
