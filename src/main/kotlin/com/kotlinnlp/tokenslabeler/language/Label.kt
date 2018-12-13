@@ -15,9 +15,14 @@ import java.io.Serializable
  * @property type the BIEOU tag
  * @property value the name of the label (e.g. "PER", "LOC", "ORG")
  */
-data class Label(var type: BIEOUTag, var value: String) : Serializable {
+data class Label(var type: BIEOUTag, var value: String = EMPTY_VALUE) : Serializable {
 
   companion object {
+
+    /**
+     * The empty value.
+     */
+    const val EMPTY_VALUE = ""
 
     /**
      * Private val used to serialize the class (needed by Serializable).

@@ -86,12 +86,14 @@ class DatasetReader(
 
     tags.indices.forEach { i ->
 
+      val value: String = tags[i].replace(Regex("^B-|^I-|^O"), "")
+
       labels.add(Label(
         type = this.schemeConverter.convertTag(
           tag = tags[i],
           prevTag = tags.getOrNull(i - 1),
           nextTag = tags.getOrNull(i + 1)),
-        value = tags[i].replace(Regex("^B-|^I-|^O"), "")))
+        value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE))
     }
 
     labels.zipWithNext { a, b ->
