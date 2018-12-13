@@ -62,9 +62,9 @@ class TokensLabeler(
     val decoder = LabelsDecoder(
       predictions = this.forward(input),
       model = this.model,
-      maxBeamSize = 2,
-      maxForkSize = 2,
-      maxIterations = 1)
+      maxBeamSize = 3,
+      maxForkSize = 5,
+      maxIterations = 10)
 
     val bestState: LabelsDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
     val bestLabels: Sequence<Label> = bestState.elements
