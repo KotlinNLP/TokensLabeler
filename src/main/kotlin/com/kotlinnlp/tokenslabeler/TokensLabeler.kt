@@ -62,9 +62,9 @@ class TokensLabeler(
     val decoder = LabelsDecoder(
       predictions = this.forward(input),
       model = this.model,
-      maxBeamSize = 3,
-      maxForkSize = 5,
-      maxIterations = 10)
+      maxBeamSize = 2,
+      maxForkSize = 2,
+      maxIterations = 1)
 
     val bestState: LabelsDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
     val bestLabels: Sequence<Label> = bestState.elements
@@ -122,10 +122,13 @@ class TokensLabeler(
    *
    * @return a valid sequence of labels
    */
-  private fun Sequence<Label>.validate(): Sequence<Label> =
-    sequenceOf(null).plus(this)
-      .zipWithNext()
-      .map { (prev, cur) ->
-        if (LabelsDecoder.canFollow(prevLabel = prev, curLabel = cur!!)) cur else Label(BIEOUTag.Outside)
+  private fun Sequence<Label>.validate(): Sequence<Label> {
+
+    var prev: Label? = null
+
+    return this.map { cur ->
+        prev = if (LabelsDecoder.canFollow(prevLabel = prev, curLabel = cur)) cur else Label(BIEOUTag.Outside)
+        prev!!
       }
+  }
 }
