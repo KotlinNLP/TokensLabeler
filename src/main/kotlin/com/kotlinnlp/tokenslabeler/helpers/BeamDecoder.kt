@@ -72,7 +72,7 @@ internal class BeamDecoder(
      */
     private fun canFollow(curLabel: Label, prevLabel: Label?): Boolean =
       prevLabel?.type in this.validPrevious.getValue(curLabel.type) &&
-        (prevLabel == null || prevLabel.value.isEmpty() || prevLabel.value == curLabel.value)
+        (prevLabel?.value.isNullOrEmpty() || curLabel.value.isEmpty() || prevLabel!!.value == curLabel.value)
   }
 
   /**
