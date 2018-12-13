@@ -11,6 +11,7 @@ import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.BeamDecoder
+import com.kotlinnlp.tokenslabeler.language.BIEOUTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.Label
 
@@ -65,12 +66,13 @@ class TokensLabeler(
       maxForkSize = 5,
       maxIterations = 10)
 
-    return decoder.findBestConfiguration(onlyValid = false)!!
-      .elements
+    val bestState: BeamDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
+    val bestLabels: Sequence<Label> = bestState.elements
       .asSequence()
       .sortedBy { it.id }
       .map { it.value.label }
-      .toList()
+
+    return if (bestState.isValid) bestLabels.toList() else bestLabels.validate().toList()
   }
 
   /**
@@ -114,4 +116,16 @@ class TokensLabeler(
   override fun getParamsErrors(copy: Boolean) = TokensLabelerParameters(
     tokensEncoderParams = this.tokensEncoder.getParamsErrors(copy),
     biRNNParams = this.biRNNProcessor.getParamsErrors(copy))
+
+  /**
+   * Validate this sequence of labels removing invalid sub-sequences of labels.
+   *
+   * @return a valid sequence of labels
+   */
+  private fun Sequence<Label>.validate(): Sequence<Label> =
+    sequenceOf(null).plus(this)
+      .zipWithNext()
+      .map { (prev, cur) ->
+        if (BeamDecoder.canFollow(prevLabel = prev, curLabel = cur!!)) cur else Label(BIEOUTag.Outside)
+      }
 }
