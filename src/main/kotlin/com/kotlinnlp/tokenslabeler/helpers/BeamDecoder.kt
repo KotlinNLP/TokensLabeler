@@ -41,9 +41,9 @@ internal class BeamDecoder(
      * @return the map of element ids associated to their possible values, sorted by descending score
      */
     private fun getValuesMap(predictions: List<DenseNDArray>,
-                             outputLabels: DictionarySet<Label>): Map<Int, List<ScoredLabel>> {
+                             outputLabels: DictionarySet<Label>): Map<Int, List<ScoredLabel>> =
 
-      return predictions.indices.associate { tokenIndex ->
+      predictions.indices.associate { tokenIndex ->
 
         val threshold: Double = 1.0 / predictions[tokenIndex].length // it is the distribution mean
 
@@ -53,7 +53,6 @@ internal class BeamDecoder(
 
         tokenIndex to sortedLabels.filter { it.score >= threshold }.notEmptyOr { sortedLabels }
       }
-    }
 
     /**
      * Map each tag with all the tags that it can follow.
