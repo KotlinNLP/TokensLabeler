@@ -16,19 +16,22 @@ import com.kotlinnlp.utils.DictionarySet
 import com.kotlinnlp.utils.notEmptyOr
 
 /**
- * @param predictions the predictions resulting from the neural model
+ * The decoder of predictions made by the Tokens Labeler.
+ * It finds the best sequence of labels base on the given predictions.
+ *
+ * @param predictions predictions made by the Tokens Labeler
  * @param model the neural model
  * @param maxBeamSize the max number of parallel states that the beam supports (-1 = infinite)
  * @param maxForkSize the max number of forks that can be generated from a state (-1 = infinite)
  * @param maxIterations the max number of iterations of solving steps (it is the depth of beam recursion, -1 = infinite)
  */
-internal class BeamDecoder(
+internal class LabelsDecoder(
   predictions: List<DenseNDArray>,
   model: TokensLabelerModel,
   maxBeamSize: Int = 5,
   maxForkSize: Int = 3,
   maxIterations: Int = 10
-) : BeamManager<BeamDecoder.ScoredLabel, BeamDecoder.LabeledState>(
+) : BeamManager<LabelsDecoder.ScoredLabel, LabelsDecoder.LabeledState>(
   valuesMap = getValuesMap(predictions, model.outputLabels),
   maxBeamSize = maxBeamSize,
   maxForkSize = maxForkSize,

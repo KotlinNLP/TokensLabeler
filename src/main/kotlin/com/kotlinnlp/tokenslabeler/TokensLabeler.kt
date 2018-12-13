@@ -10,7 +10,7 @@ package com.kotlinnlp.tokenslabeler
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
-import com.kotlinnlp.tokenslabeler.helpers.BeamDecoder
+import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
 import com.kotlinnlp.tokenslabeler.language.BIEOUTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.Label
@@ -59,14 +59,14 @@ class TokensLabeler(
    */
   fun predict(input: BaseSentence): List<Label> {
 
-    val decoder = BeamDecoder(
+    val decoder = LabelsDecoder(
       predictions = this.forward(input),
       model = this.model,
       maxBeamSize = 3,
       maxForkSize = 5,
       maxIterations = 10)
 
-    val bestState: BeamDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
+    val bestState: LabelsDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
     val bestLabels: Sequence<Label> = bestState.elements
       .asSequence()
       .sortedBy { it.id }
@@ -126,6 +126,6 @@ class TokensLabeler(
     sequenceOf(null).plus(this)
       .zipWithNext()
       .map { (prev, cur) ->
-        if (BeamDecoder.canFollow(prevLabel = prev, curLabel = cur!!)) cur else Label(BIEOUTag.Outside)
+        if (LabelsDecoder.canFollow(prevLabel = prev, curLabel = cur!!)) cur else Label(BIEOUTag.Outside)
       }
 }
