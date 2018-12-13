@@ -70,7 +70,7 @@ internal class BeamDecoder(
      *
      * @return whether the current label can follow the previous label
      */
-    private fun canFollow(curLabel: Label, prevLabel: Label?): Boolean =
+    fun canFollow(curLabel: Label, prevLabel: Label?): Boolean =
       prevLabel?.type in this.validPrevious.getValue(curLabel.type) &&
         (prevLabel?.value.isNullOrEmpty() || curLabel.value.isEmpty() || prevLabel!!.value == curLabel.value)
   }
