@@ -28,13 +28,13 @@ import com.kotlinnlp.tokensencoder.wrapper.TokensEncoderWrapperModel
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.gazetteers.GazetteersEncoderModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
-import com.kotlinnlp.tokenslabeler.helpers.SchemeConverter
 import com.kotlinnlp.tokenslabeler.helpers.Trainer
 import com.kotlinnlp.tokenslabeler.helpers.Validator
 import com.kotlinnlp.tokenslabeler.language.*
 import com.xenomachina.argparser.mainBody
 import java.io.File
 import java.io.FileInputStream
+import java.lang.NumberFormatException
 
 /**
  * Train the [TokensLabelerModel].
@@ -45,18 +45,14 @@ fun main(args: Array<String>) = mainBody {
 
   val parsedArgs = CommandLineArguments(args)
 
-  val tagConverter = SchemeConverter.BioToIoe2
-
   val trainingSentences: List<AnnotatedSentence> = DatasetReader(
     type = "training",
     filePath = parsedArgs.trainingSetPath,
-    schemeConverter = tagConverter,
     maxSentences = parsedArgs.maxSentences).loadSentences()
 
   val testSentences: List<AnnotatedSentence> = DatasetReader(
     type = "test",
     filePath = parsedArgs.validationSetPath,
-    schemeConverter = tagConverter,
     maxSentences = null).loadSentences()
 
   val dictionary: CorpusDictionary = trainingSentences.let {
@@ -126,8 +122,14 @@ fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionar
   return embeddingsDir.listFilesOrRaise().map { embeddingsFile ->
 
     println("Loading pre-trained word embeddings from '${embeddingsFile.name}'...")
-    EMBDLoader(verbose = true).load(embeddingsFile.absolutePath.toString())
-  }
+
+    try {
+      EMBDLoader(verbose = true).load(embeddingsFile.absolutePath.toString())
+    } catch (e: NumberFormatException) {
+      println("NumberFormatException: skip '${embeddingsFile.name}'...")
+      null
+    }
+  }.filterNotNull()
 }
 
 /**

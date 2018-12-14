@@ -59,13 +59,13 @@ internal class LabelsDecoder(
 
     /**
      * Map each tag with all the tags that it can follow.
-     *
-     * TODO: extend to other annotation schemas
      */
     private val validPrevious = mapOf(
-      BIEOUTag.Inside to setOf(null, BIEOUTag.Outside, BIEOUTag.Inside, BIEOUTag.End),
-      BIEOUTag.End to setOf(BIEOUTag.Inside),
-      BIEOUTag.Outside to setOf(null, BIEOUTag.Outside, BIEOUTag.Inside, BIEOUTag.End))
+      BIEOUTag.Outside to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
+      BIEOUTag.Unit to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
+      BIEOUTag.Beginning to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
+      BIEOUTag.Inside to setOf(BIEOUTag.Beginning, BIEOUTag.Inside),
+      BIEOUTag.End to setOf(BIEOUTag.Beginning, BIEOUTag.Inside))
 
     /**
      * @param curLabel the current label
@@ -74,8 +74,7 @@ internal class LabelsDecoder(
      * @return whether the current label can follow the previous label
      */
     fun canFollow(curLabel: Label, prevLabel: Label?): Boolean =
-      prevLabel?.type in this.validPrevious.getValue(curLabel.type) &&
-        (prevLabel?.value.isNullOrEmpty() || curLabel.value.isEmpty() || prevLabel!!.value == curLabel.value)
+      prevLabel?.type in this.validPrevious.getValue(curLabel.type) // TODO: check value
   }
 
   /**

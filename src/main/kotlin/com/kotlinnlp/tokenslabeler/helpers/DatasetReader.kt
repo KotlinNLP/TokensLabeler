@@ -18,13 +18,11 @@ import java.io.InputStreamReader
  *
  * @param type the string that describes the type of sentences
  * @param filePath the file path
- * @param schemeConverter the tags coding scheme (BIEOU, BIO, ...)
  * @param maxSentences the max number of sentences to load
  */
 class DatasetReader(
   private val type: String,
   private val filePath: String,
-  private val schemeConverter: SchemeConverter,
   private val maxSentences: Int? = null
 ) {
 
@@ -89,10 +87,9 @@ class DatasetReader(
       val value: String = tags[i].replace(Regex("^B-|^I-|^O"), "")
 
       labels.add(Label(
-        type = this.schemeConverter.convertTag(
-          tag = tags[i],
-          prevTag = tags.getOrNull(i - 1),
-          nextTag = tags.getOrNull(i + 1)),
+        type = convertTag(
+          tag = tags[i].toTag()!!,
+          nextTag = tags.getOrNull(i + 1).toTag()),
         value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE))
     }
 
@@ -102,5 +99,45 @@ class DatasetReader(
     }
 
     return labels
+  }
+
+  /**
+   * @return the tag in the BIO format
+   */
+  private fun String?.toTag(): BIEOUTag? =
+    if (this == null)
+      null
+    else when {
+      this.startsWith("O") -> BIEOUTag.Outside
+      this.startsWith("B-") -> BIEOUTag.Beginning
+      this.startsWith("I-") -> BIEOUTag.Inside
+      else -> throw IllegalArgumentException("Unexpected tag")
+    }
+
+  /**
+   * Convert the [tag] from the BIO to the BIEOU format.
+   *
+   * @param tag the current tag
+   * @param nextTag the next tag
+   *
+   * @return the converted tag
+   */
+  private fun convertTag(tag: BIEOUTag, nextTag: BIEOUTag?): BIEOUTag {
+    return if (nextTag != null)
+      when {
+        tag == BIEOUTag.Outside -> BIEOUTag.Outside
+        tag == BIEOUTag.Beginning && nextTag != BIEOUTag.Inside -> BIEOUTag.Unit
+        tag == BIEOUTag.Beginning && nextTag == BIEOUTag.Inside -> BIEOUTag.Beginning
+        tag == BIEOUTag.Inside && nextTag == BIEOUTag.Inside -> BIEOUTag.Inside
+        tag == BIEOUTag.Inside && nextTag != BIEOUTag.Inside -> BIEOUTag.End
+        else -> throw IllegalArgumentException("Unexpected tag")
+      }
+    else
+      when (tag) {
+        BIEOUTag.Outside -> BIEOUTag.Outside
+        BIEOUTag.Inside -> BIEOUTag.End
+        BIEOUTag.Beginning -> BIEOUTag.Unit
+        else -> throw IllegalArgumentException("Unexpected tag")
+      }
   }
 }

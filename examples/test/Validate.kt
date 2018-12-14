@@ -10,7 +10,6 @@ package test
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
 import com.kotlinnlp.tokenslabeler.helpers.LabelStatistics
-import com.kotlinnlp.tokenslabeler.helpers.SchemeConverter
 import com.kotlinnlp.tokenslabeler.helpers.Validator
 import com.kotlinnlp.tokenslabeler.language.*
 import java.io.File
@@ -35,7 +34,6 @@ fun main(args: Array<String>) {
   val testSentences: List<AnnotatedSentence> = DatasetReader(
     type = "test",
     filePath = args[1],
-    schemeConverter = SchemeConverter.BioToIoe2, // TODO: save the schema in the model
     maxSentences = null).loadSentences()
 
   val validator = Validator(model = model, testSentences = testSentences)
