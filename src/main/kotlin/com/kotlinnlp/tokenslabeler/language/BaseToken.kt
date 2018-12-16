@@ -7,7 +7,6 @@
 
 package com.kotlinnlp.tokenslabeler.language
 
-import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
@@ -20,5 +19,5 @@ import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 class BaseToken(
   override val form: String,
   override val position: Position
-) : RealToken, FormToken
+) : RealToken
 
