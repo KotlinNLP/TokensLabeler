@@ -57,4 +57,11 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
       })
     }
   }
+
+  /**
+   * @param labels list of labels, one for each token
+   */
+  fun toAnnotatedSentence(labels: List<Label>) = AnnotatedSentence(this.tokens.mapIndexed { tokenIndex, it ->
+    AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex])
+  })
 }
