@@ -14,4 +14,10 @@ import com.kotlinnlp.linguisticdescription.sentence.Sentence
  *
  * @property tokens the list of tokens that compose the sentence
  */
-data class AnnotatedSentence(override val tokens: List<AnnotatedToken>) : Sentence<AnnotatedToken>
+data class AnnotatedSentence(override val tokens: List<AnnotatedToken>) : Sentence<AnnotatedToken> {
+
+  /**
+   * @return the string representation of this sentence
+   */
+  override fun toString(): String = this.tokens.joinToString("\n")
+}

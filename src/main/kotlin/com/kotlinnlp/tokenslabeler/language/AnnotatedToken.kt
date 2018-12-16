@@ -20,4 +20,11 @@ data class AnnotatedToken(
   override val form: String,
   override val position: Position,
   val label: Label
-) : RealToken
+) : RealToken {
+
+  /**
+   * @return the string representation of this token
+   */
+  override fun toString(): String = "${this.form}\t${this.label}"
+}
+
