@@ -65,7 +65,8 @@ internal class LabelsDecoder(
       BIEOUTag.Unit to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
       BIEOUTag.Beginning to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
       BIEOUTag.Inside to setOf(BIEOUTag.Beginning, BIEOUTag.Inside),
-      BIEOUTag.End to setOf(BIEOUTag.Beginning, BIEOUTag.Inside))
+      BIEOUTag.End to setOf(BIEOUTag.Beginning, BIEOUTag.Inside),
+      null to setOf(BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End))
 
     /**
      * @param curLabel the current label
@@ -73,8 +74,9 @@ internal class LabelsDecoder(
      *
      * @return whether the current label can follow the previous label
      */
-    fun canFollow(curLabel: Label, prevLabel: Label?): Boolean =
-      prevLabel?.type in this.validPrevious.getValue(curLabel.type) // TODO: check value
+    fun canFollow(curLabel: Label?, prevLabel: Label?): Boolean =
+      prevLabel?.type in this.validPrevious.getValue(curLabel?.type) &&
+        (prevLabel?.value.isNullOrEmpty() || curLabel?.value.isNullOrEmpty() || prevLabel!!.value == curLabel!!.value)
   }
 
   /**
@@ -100,9 +102,9 @@ internal class LabelsDecoder(
      * Whether the state contains a correct sequence according to the constraints of the chosen BIEOU annotation schema.
      */
     override var isValid: Boolean =
-      sequenceOf(null).plus(this.elements.indices.asSequence().map { i -> this.getElement(i).value.label })
+      sequenceOf(null).plus(this.elements.indices.asSequence().map { i -> this.getElement(i).value.label }).plus(sequenceOf(null))
         .zipWithNext()
-        .all { canFollow(prevLabel = it.first, curLabel = it.second!!) }
+        .all { canFollow(prevLabel = it.first, curLabel = it.second) }
   }
 
   /**
