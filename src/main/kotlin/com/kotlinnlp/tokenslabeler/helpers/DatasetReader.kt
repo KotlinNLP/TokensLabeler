@@ -18,11 +18,13 @@ import java.io.InputStreamReader
  *
  * @param type the string that describes the type of sentences
  * @param filePath the file path
+ * @param useOPlus whether to use the "O Plus" annotation
  * @param maxSentences the max number of sentences to load
  */
 class DatasetReader(
   private val type: String,
   private val filePath: String,
+  private val useOPlus: Boolean,
   private val maxSentences: Int? = null
 ) {
 
@@ -70,9 +72,7 @@ class DatasetReader(
       line.split("\t").let { Pair(it[0], it[1]) }
     }.unzip()
 
-    return AnnotatedSentence(BaseSentence(forms).tokens.zip(this.getLabels(annotations)).map { (token, label) ->
-      AnnotatedToken(form = token.form, position = token.position, label = label)
-    })
+    return BaseSentence(forms).toAnnotatedSentence(this.getLabels(annotations))
   }
 
   /**
@@ -93,12 +93,14 @@ class DatasetReader(
         value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE))
     }
 
-    labels.zipWithNext { a, b ->
-      if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside)
-        a.value = b.value
-    }
+    return labels.let { if (this.useOPlus) it.setOPlus(); it }
+  }
 
-    return labels
+  /**
+   * Enrich the annotation with the "O Plus".
+   */
+  private fun MutableList<Label>.setOPlus() = this.zipWithNext { a, b ->
+    if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside) a.value = b.value
   }
 
   /**
