@@ -34,6 +34,14 @@ class TokensLabeler(
   TokensLabelerParameters
   > {
 
+  companion object {
+
+    /**
+     * Possible tags at the end of a sequence.
+     */
+    private val finalTags = setOf(BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End)
+  }
+
   /**
    * Not used because the input is a sentence.
    */
@@ -59,20 +67,25 @@ class TokensLabeler(
    */
   fun predict(input: BaseSentence): List<Label> {
 
+    val output: List<DenseNDArray> = this.forward(input)
+
     val decoder = LabelsDecoder(
-      predictions = this.forward(input),
+      predictions = output,
       model = this.model,
       maxBeamSize = 3,
       maxForkSize = 5,
       maxIterations = 10)
 
     val bestState: LabelsDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
-    val bestLabels: Sequence<Label> = bestState.elements
-      .asSequence()
-      .sortedBy { it.id }
-      .map { it.value.label }
 
-    return if (bestState.isValid) bestLabels.toList() else bestLabels.validate().toList()
+    return if (bestState.isValid)
+      bestState.elements
+        .asSequence()
+        .sortedBy { it.id }
+        .map { it.value.label }
+        .toList()
+    else
+      greedyDecode(output)
   }
 
   /**
@@ -122,13 +135,21 @@ class TokensLabeler(
    *
    * @return a valid sequence of labels
    */
-  private fun Sequence<Label>.validate(): Sequence<Label> {
+  private fun greedyDecode(predictions: List<DenseNDArray>): List<Label> {
 
     var prev: Label? = null
 
-    return this.map { cur ->
-        prev = if (LabelsDecoder.canFollow(prevLabel = prev, curLabel = cur)) cur else Label(BIEOUTag.Outside)
-        prev!!
-      }
+    return predictions.indices.map { tokenIndex ->
+
+      prev = predictions[tokenIndex].argSorted(reverse = true)
+        .asSequence()
+        .map { this.model.outputLabels.getElement(it)!! }
+        .first {
+          LabelsDecoder.canFollow(prevLabel = prev, curLabel = it) &&
+            (tokenIndex != predictions.lastIndex || it.type in finalTags )
+        }
+
+      prev!!
+    }
   }
 }
