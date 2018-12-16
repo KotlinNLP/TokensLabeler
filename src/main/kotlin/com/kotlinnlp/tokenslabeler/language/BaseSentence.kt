@@ -8,6 +8,7 @@
 package com.kotlinnlp.tokenslabeler.language
 
 import com.kotlinnlp.linguisticdescription.sentence.Sentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
 /**
@@ -21,6 +22,13 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
    * @param sentence an annotated sentence
    */
   constructor(sentence: AnnotatedSentence) : this(
+    sentence.tokens.map { BaseToken(form = it.form, position = it.position) }
+  )
+
+  /**
+   * @param sentence a sentence of RealTokens
+   */
+  constructor(sentence: Sentence<RealToken>) : this(
     sentence.tokens.map { BaseToken(form = it.form, position = it.position) }
   )
 
@@ -46,8 +54,7 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
           form = it,
           position = Position(index = i, start = start, end = end)
         )
-      }
-      )
+      })
     }
   }
 }
