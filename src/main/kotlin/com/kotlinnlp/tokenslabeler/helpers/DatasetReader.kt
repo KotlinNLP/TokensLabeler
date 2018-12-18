@@ -25,6 +25,7 @@ class DatasetReader(
   private val type: String,
   private val filePath: String,
   private val useOPlus: Boolean,
+  private val useBIEOU: Boolean,
   private val maxSentences: Int? = null
 ) {
 
@@ -72,13 +73,17 @@ class DatasetReader(
       line.split("\t").let { Pair(it[0], it[1]) }
     }.unzip()
 
-    return BaseSentence(forms).toAnnotatedSentence(this.getLabels(annotations))
+    val labels = this.getLabels(annotations)
+    if (this.useBIEOU) labels.convertToBIEOU()
+    if (this.useOPlus) labels.setOPlus()
+
+    return BaseSentence(forms).toAnnotatedSentence(labels)
   }
 
   /**
    *
    */
-  private fun getLabels(tags: List<String>): List<Label> {
+  private fun getLabels(tags: List<String>): MutableList<Label> {
 
     val labels = mutableListOf<Label>()
 
@@ -87,20 +92,11 @@ class DatasetReader(
       val value: String = tags[i].replace(Regex("^B-|^I-|^O"), "")
 
       labels.add(Label(
-        type = convertTag(
-          tag = tags[i].toTag()!!,
-          nextTag = tags.getOrNull(i + 1).toTag()),
+        type = tags[i].toTag()!!,
         value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE))
     }
 
-    return labels.let { if (this.useOPlus) it.setOPlus(); it }
-  }
-
-  /**
-   * Enrich the annotation with the "O Plus".
-   */
-  private fun MutableList<Label>.setOPlus() = this.zipWithNext { a, b ->
-    if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside) a.value = b.value
+    return labels
   }
 
   /**
@@ -142,4 +138,17 @@ class DatasetReader(
         else -> throw IllegalArgumentException("Unexpected tag")
       }
   }
+
+  /**
+   * Enrich the annotation with the "O Plus".
+   */
+  private fun MutableList<Label>.setOPlus() = this.zipWithNext { a, b ->
+    if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside) a.value = b.value
+  }
+
+  /**
+   * Enrich the annotation with the "O Plus".
+   */
+  private fun MutableList<Label>.convertToBIEOU() =
+    this.zipWithNext { cur, next -> cur.type = convertTag(cur.type, next.type) }
 }

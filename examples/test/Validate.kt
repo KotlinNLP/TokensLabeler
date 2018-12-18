@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
     type = "test",
     filePath = args[1],
     useOPlus = false,
+    useBIEOU = true,
     maxSentences = null).loadSentences()
 
   val validator = Validator(model = model, testSentences = testSentences)
