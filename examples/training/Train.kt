@@ -123,7 +123,7 @@ fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionar
 
   require(embeddingsDir.isDirectory) { "$embeddingsDirname is not a directory" }
 
-  return embeddingsDir.listFilesOrRaise().map { embeddingsFile ->
+  return embeddingsDir.listFilesOrRaise().mapNotNull { embeddingsFile ->
 
     println("Loading pre-trained word embeddings from '${embeddingsFile.name}'...")
 
@@ -133,7 +133,7 @@ fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionar
       println("NumberFormatException: skip '${embeddingsFile.name}'...")
       null
     }
-  }.filterNotNull()
+  }
 }
 
 /**
