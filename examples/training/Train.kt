@@ -143,7 +143,7 @@ fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionar
  * @return the tokens encoder that works on the [embeddingsMap]
  */
 fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMapByDictionary, dropout: Double) = TokensEncoderWrapperModel (
-  model = EmbeddingsEncoderModel(
+  model = EmbeddingsEncoderModel.Base(
     embeddingsMap = embeddingsMap,
     embeddingKeyExtractor = WordKeyExtractor(),
     fallbackEmbeddingKeyExtractors = listOf(NormWordKeyExtractor()),
