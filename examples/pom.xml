@@ -16,7 +16,7 @@
         <klaxon.version>3.0.5</klaxon.version>
         <tokenslabeler.version>0.1.1</tokenslabeler.version>
         <tokensencoder.version>0.5.0</tokensencoder.version>
-        <simplednn.version>0.11.2</simplednn.version>
+        <simplednn.version>0.12.0</simplednn.version>
         <utils.version>2.1.1</utils.version>
     </properties>
 
