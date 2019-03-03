@@ -7,10 +7,10 @@
 
 package com.kotlinnlp.tokenslabeler.gazetteers
 
-import com.kotlinnlp.simplednn.core.neuralnetwork.NetworkParameters
+import com.kotlinnlp.simplednn.core.layers.StackedLayersParameters
 import com.kotlinnlp.tokensencoder.TokensEncoderParameters
 
 /**
  * @property parameters the param of the feed-forward network of the [GazetteersEncoderModel]
  */
-class GazetteersEncoderParams(val parameters: NetworkParameters) : TokensEncoderParameters
+class GazetteersEncoderParams(val parameters: StackedLayersParameters) : TokensEncoderParameters

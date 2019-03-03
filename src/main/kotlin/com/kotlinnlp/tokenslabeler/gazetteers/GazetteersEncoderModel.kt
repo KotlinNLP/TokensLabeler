@@ -14,7 +14,7 @@ import com.kotlinnlp.simplednn.core.functionalities.initializers.Initializer
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.UpdateMethod
 import com.kotlinnlp.simplednn.core.layers.LayerInterface
 import com.kotlinnlp.simplednn.core.layers.LayerType
-import com.kotlinnlp.simplednn.core.neuralnetwork.NeuralNetwork
+import com.kotlinnlp.simplednn.core.layers.StackedLayersParameters
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.BaseToken
@@ -51,7 +51,7 @@ class GazetteersEncoderModel(
   /**
    * The model of the feed-forward Network used to transform the input from sparse to dense
    */
-  val denseEncoder = NeuralNetwork (
+  val denseEncoder = StackedLayersParameters (
     LayerInterface(
       size = this.inputSize,
       type = LayerType.Input.SparseBinary),

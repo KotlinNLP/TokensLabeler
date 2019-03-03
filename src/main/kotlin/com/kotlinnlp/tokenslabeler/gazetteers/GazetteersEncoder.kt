@@ -138,7 +138,7 @@ class GazetteersEncoder(
    * The feed-forward network used to transform the input from sparse to dense.
    */
   private val encoder = BatchFeedforwardProcessor<SparseBinaryNDArray>(
-    neuralNetwork = this.model.denseEncoder,
+    model = this.model.denseEncoder,
     useDropout = this.useDropout,
     propagateToInput = false)
 
