@@ -10,8 +10,7 @@ package training
 import com.kotlinnlp.languagemodel.CharLM
 import com.kotlinnlp.linguisticdescription.language.getLanguageByIso
 import com.kotlinnlp.morphologicalanalyzer.dictionary.MorphologyDictionary
-import com.kotlinnlp.simplednn.core.embeddings.EMBDLoader
-import com.kotlinnlp.simplednn.core.embeddings.EmbeddingsMapByDictionary
+import com.kotlinnlp.simplednn.core.embeddings.EmbeddingsMap
 import com.kotlinnlp.simplednn.core.functionalities.activations.Tanh
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.adam.ADAMMethod
 import com.kotlinnlp.simplednn.core.layers.LayerType
@@ -116,7 +115,7 @@ private fun buildTokensEncoderModel(
 /**
  * @param embeddingsDirname the directory containing the embeddings vectors files
  */
-fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionary> {
+fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMap<String>> {
 
   println("Loading embeddings from '$embeddingsDirname'")
   val embeddingsDir = File(embeddingsDirname)
@@ -128,7 +127,7 @@ fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionar
     println("Loading pre-trained word embeddings from '${embeddingsFile.name}'...")
 
     try {
-      EMBDLoader(verbose = true).load(embeddingsFile.absolutePath.toString())
+      EmbeddingsMap.load(embeddingsFile.absolutePath.toString(), verbose = true)
     } catch (e: NumberFormatException) {
       println("NumberFormatException: skip '${embeddingsFile.name}'...")
       null
@@ -142,12 +141,12 @@ fun loadEmbeddingsMaps(embeddingsDirname: String): List<EmbeddingsMapByDictionar
  *
  * @return the tokens encoder that works on the [embeddingsMap]
  */
-fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMapByDictionary, dropout: Double) = TokensEncoderWrapperModel (
+fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMap<String>, dropout: Double) = TokensEncoderWrapperModel (
   model = EmbeddingsEncoderModel.Base(
     embeddingsMap = embeddingsMap,
     embeddingKeyExtractor = WordKeyExtractor(),
     fallbackEmbeddingKeyExtractors = listOf(NormWordKeyExtractor()),
-    dropoutCoefficient = dropout),
+    dropout = dropout),
   converter = FormConverter())
 
 /**
