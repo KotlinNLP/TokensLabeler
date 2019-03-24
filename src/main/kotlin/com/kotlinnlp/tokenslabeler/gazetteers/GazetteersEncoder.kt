@@ -15,12 +15,12 @@ import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.morphologicalanalyzer.MorphologicalAnalyzer
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.core.neuralprocessor.batchfeedforward.BatchFeedforwardProcessor
+import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.simplemath.ndarray.Shape
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.simplednn.simplemath.ndarray.sparsebinary.SparseBinaryNDArray
 import com.kotlinnlp.simplednn.simplemath.ndarray.sparsebinary.SparseBinaryNDArrayFactory
 import com.kotlinnlp.tokensencoder.TokensEncoder
-import com.kotlinnlp.tokensencoder.TokensEncoderParameters
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.BaseToken
 import java.lang.RuntimeException
@@ -170,8 +170,8 @@ class GazetteersEncoder(
    *
    * @return the errors of the model parameters
    */
-  override fun getParamsErrors(copy: Boolean): TokensEncoderParameters =
-    GazetteersEncoderParams(parameters = this.encoder.getParamsErrors(copy = copy))
+  override fun getParamsErrors(copy: Boolean): ParamsErrorsList =
+    this.encoder.getParamsErrors(copy = copy)
 
   /**
    * @param copy whether to return by value or by reference

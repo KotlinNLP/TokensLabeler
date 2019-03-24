@@ -8,6 +8,7 @@
 package com.kotlinnlp.tokenslabeler
 
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
+import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
@@ -30,8 +31,7 @@ class TokensLabeler(
   BaseSentence, // InputType
   List<DenseNDArray>, // OutputType
   List<DenseNDArray>, // ErrorsType
-  NeuralProcessor.NoInputErrors, // InputErrorsType
-  TokensLabelerParameters
+  NeuralProcessor.NoInputErrors // InputErrorsType
   > {
 
   companion object {
@@ -126,9 +126,9 @@ class TokensLabeler(
    *
    * @return the parameters errors
    */
-  override fun getParamsErrors(copy: Boolean) = TokensLabelerParameters(
-    tokensEncoderParams = this.tokensEncoder.getParamsErrors(copy),
-    biRNNParams = this.biRNNProcessor.getParamsErrors(copy))
+  override fun getParamsErrors(copy: Boolean): ParamsErrorsList =
+    this.tokensEncoder.getParamsErrors(copy) +
+      this.biRNNProcessor.getParamsErrors(copy)
 
   /**
    * Validate this sequence of labels removing invalid sub-sequences of labels.

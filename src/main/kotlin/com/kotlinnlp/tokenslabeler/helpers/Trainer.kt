@@ -10,12 +10,12 @@ package com.kotlinnlp.tokenslabeler.helpers
 import com.kotlinnlp.simplednn.core.functionalities.losses.SoftmaxCrossEntropyCalculator
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.UpdateMethod
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.adam.ADAMMethod
+import com.kotlinnlp.simplednn.core.optimizer.ParamsOptimizer
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.simplednn.utils.scheduling.BatchScheduling
 import com.kotlinnlp.simplednn.utils.scheduling.EpochScheduling
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
-import com.kotlinnlp.tokenslabeler.TokensLabelerOptimizer
 import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.utils.ExamplesIndices
@@ -67,7 +67,7 @@ class Trainer(
   /**
    * The optimizer of the [model] parameters.
    */
-  private val optimizer = TokensLabelerOptimizer(this.model, this.updateMethod)
+  private val optimizer = ParamsOptimizer(this.updateMethod)
 
   /**
    * Check requirements.
