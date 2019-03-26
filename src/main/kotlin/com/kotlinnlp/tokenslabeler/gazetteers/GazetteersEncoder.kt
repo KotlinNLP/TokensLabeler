@@ -7,7 +7,6 @@
 
 package com.kotlinnlp.tokenslabeler.gazetteers
 
-import com.kotlinnlp.linguisticdescription.language.Language
 import com.kotlinnlp.linguisticdescription.morphology.MorphologicalAnalysis
 import com.kotlinnlp.linguisticdescription.morphology.Morphology
 import com.kotlinnlp.linguisticdescription.morphology.POS
@@ -129,7 +128,6 @@ class GazetteersEncoder(
    * The morphological analyzer that works with the gazetteers dictionary.
    */
   private val analyzer = MorphologicalAnalyzer(
-    language = with(this.model.gazetteers) { if (language == Language.Unknown) Language.English else language },
     dictionary = this.model.gazetteers,
     processDateTimes = false,
     processNumbers = false)
