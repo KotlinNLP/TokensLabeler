@@ -97,11 +97,14 @@ private fun buildTokensEncoderModel(
 ): TokensEncoderModel<BaseToken, BaseSentence> {
 
   val embeddingsEncoders = loadEmbeddingsMaps(parsedArgs.embeddingsDirname!!).map { preEmbeddingsMap ->
-    EnsembleTokensEncoderModel.ComponentModel(buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false)
+    EnsembleTokensEncoderModel.ComponentModel(model = buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false)
   }
-
-  val charLMEncoder = EnsembleTokensEncoderModel.ComponentModel(buildCharLMEncoder(parsedArgs))
-  val gazetteersEncoder = EnsembleTokensEncoderModel.ComponentModel(buildGazetteersEncoder(parsedArgs))
+  val charLMEncoder = EnsembleTokensEncoderModel.ComponentModel(
+    model = buildCharLMEncoder(parsedArgs),
+    trainable = true)
+  val gazetteersEncoder = EnsembleTokensEncoderModel.ComponentModel(
+    model = buildGazetteersEncoder(parsedArgs),
+    trainable = true)
 
   return TokensEncoderWrapperModel(
     model = EnsembleTokensEncoderModel(
