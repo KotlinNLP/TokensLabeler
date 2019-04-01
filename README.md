@@ -13,7 +13,7 @@ TokensLabeler is based on the [SimpleDNN](https://github.com/kotlinnlp/SimpleDNN
 <dependency>
     <groupId>com.kotlinnlp</groupId>
     <artifactId>tokenslabeler</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
