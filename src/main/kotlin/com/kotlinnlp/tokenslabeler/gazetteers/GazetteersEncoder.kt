@@ -10,6 +10,7 @@ package com.kotlinnlp.tokenslabeler.gazetteers
 import com.kotlinnlp.linguisticdescription.morphology.MorphologicalAnalysis
 import com.kotlinnlp.linguisticdescription.morphology.Morphology
 import com.kotlinnlp.linguisticdescription.morphology.POS
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.Sentence
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.morphologicalanalyzer.MorphologicalAnalyzer
@@ -150,7 +151,7 @@ class GazetteersEncoder(
   override fun forward(input: BaseSentence): List<DenseNDArray> {
 
     @Suppress("UNCHECKED_CAST")
-    val analysis = this.analyzer.analyze(input as Sentence<RealToken>)
+    val analysis = this.analyzer.analyze(input as RealSentence<RealToken>)
 
     val entitiesFeatures: List<SparseBinaryNDArray> =
       this.convertToBinaryFeatures(entities = this.getEntities(analysis), sentenceSize = input.tokens.size)

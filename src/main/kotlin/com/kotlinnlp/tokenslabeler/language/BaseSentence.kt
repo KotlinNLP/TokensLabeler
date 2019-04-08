@@ -7,7 +7,7 @@
 
 package com.kotlinnlp.tokenslabeler.language
 
-import com.kotlinnlp.linguisticdescription.sentence.Sentence
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
@@ -15,21 +15,27 @@ import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
  * A base sentence.
  *
  * @property tokens the list of tokens that compose the sentence
+ * @property position the position of this sentence in the original text
  */
-data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseToken> {
+data class BaseSentence(
+  override val tokens: List<BaseToken>,
+  override val position: Position
+) : RealSentence<BaseToken> {
 
   /**
    * @param sentence an annotated sentence
    */
   constructor(sentence: AnnotatedSentence) : this(
-    sentence.tokens.map { BaseToken(form = it.form, position = it.position) }
+    tokens = sentence.tokens.map { BaseToken(form = it.form, position = it.position) },
+    position = sentence.position
   )
 
   /**
    * @param sentence a sentence of RealTokens
    */
-  constructor(sentence: Sentence<RealToken>) : this(
-    sentence.tokens.map { BaseToken(form = it.form, position = it.position) }
+  constructor(sentence: RealSentence<RealToken>) : this(
+    tokens = sentence.tokens.map { BaseToken(form = it.form, position = it.position) },
+    position = sentence.position
   )
 
   companion object {
@@ -45,7 +51,7 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
 
       var end = -2
 
-      return BaseSentence(tokens = forms.mapIndexed { i, it ->
+      val tokens = forms.mapIndexed { i, it ->
 
         val start = end + 2 // each couple of consecutive tokens is separated by a spacing char
         end = start + it.length - 1
@@ -54,14 +60,23 @@ data class BaseSentence(override val tokens: List<BaseToken>) : Sentence<BaseTok
           form = it,
           position = Position(index = i, start = start, end = end)
         )
-      })
+      }
+
+      return BaseSentence(
+        tokens = tokens,
+        position = Position(
+          index = 0,
+          start = tokens.first().position.start,
+          end = tokens.last().position.end))
     }
   }
 
   /**
    * @param labels list of labels, one for each token
    */
-  fun toAnnotatedSentence(labels: List<Label>) = AnnotatedSentence(this.tokens.mapIndexed { tokenIndex, it ->
-    AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex])
-  })
+  fun toAnnotatedSentence(labels: List<Label>) = AnnotatedSentence(
+    tokens = this.tokens.mapIndexed { tokenIndex, it ->
+      AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex]) },
+    position = this.position
+  )
 }

@@ -7,14 +7,18 @@
 
 package com.kotlinnlp.tokenslabeler.language
 
-import com.kotlinnlp.linguisticdescription.sentence.Sentence
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
 /**
  * The annotated sentence.
  *
  * @property tokens the list of tokens that compose the sentence
  */
-data class AnnotatedSentence(override val tokens: List<AnnotatedToken>) : Sentence<AnnotatedToken> {
+data class AnnotatedSentence(
+  override val tokens: List<AnnotatedToken>,
+  override val position: Position
+) : RealSentence<AnnotatedToken> {
 
   /**
    * @return the string representation of this sentence
