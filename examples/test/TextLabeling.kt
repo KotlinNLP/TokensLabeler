@@ -7,7 +7,8 @@
 
 package test
 
-import com.kotlinnlp.linguisticdescription.sentence.token.SentenceOfRealTokens
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.neuraltokenizer.NeuralTokenizer
 import com.kotlinnlp.neuraltokenizer.NeuralTokenizerModel
 import com.kotlinnlp.tokenslabeler.TokensLabeler
@@ -48,7 +49,7 @@ fun main(args: Array<String>) {
       tokenizer.tokenize(inputText).forEach { s ->
 
         @Suppress("UNCHECKED_CAST")
-        val sentence = BaseSentence(s as SentenceOfRealTokens)
+        val sentence = BaseSentence(s as RealSentence<RealToken>)
 
         println(sentence.toAnnotatedSentence(labeler.predict(sentence)).toString() + "\n")
       }
