@@ -14,10 +14,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.version>1.3.10</kotlin.version>
         <klaxon.version>3.0.5</klaxon.version>
-        <tokenslabeler.version>0.2.1</tokenslabeler.version>
-        <tokensencoder.version>0.5.2</tokensencoder.version>
-        <simplednn.version>0.13.1</simplednn.version>
-        <utils.version>2.1.2</utils.version>
+        <tokenslabeler.version>0.2.2</tokenslabeler.version>
+        <tokensencoder.version>0.5.3</tokensencoder.version>
+        <simplednn.version>0.13.2</simplednn.version>
+        <utils.version>2.1.3</utils.version>
     </properties>
 
     <repositories>
