@@ -48,6 +48,6 @@ data class LabelStatistics(
   /**
    * @return the string representation
    */
-  override fun toString() = "label: %s | precision: %.2f | recall: %.2f | f-measure: %.2f"
-    .format(this.label, this.precision, this.recall, this.f1)
+  override fun toString() = "label: %s | precision: %.2f%% | recall: %.2f%% | f-measure: %.2f%%"
+    .format(this.label, 100.0 * this.precision, 100.0 * this.recall, 100.0 * this.f1)
 }
