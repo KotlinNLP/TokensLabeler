@@ -115,11 +115,11 @@ class CommandLineArguments(args: Array<String>) {
   /**
    * The directory which contains pre-trained word embeddings.
    */
-  val embeddingsDirname: String? by parser.storing(
+  val embeddingsDirname: String by parser.storing(
     "-w",
     "--word-emb-dir",
     help="the directory which contains pre-trained word embeddings"
-  ).default { null }
+  )
 
   /**
    * The size of the word embedding vectors.

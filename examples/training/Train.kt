@@ -96,7 +96,7 @@ private fun buildTokensEncoderModel(
   parsedArgs: CommandLineArguments
 ): TokensEncoderModel<BaseToken, BaseSentence> {
 
-  val embeddingsEncoders = loadEmbeddingsMaps(parsedArgs.embeddingsDirname!!).map { preEmbeddingsMap ->
+  val embeddingsEncoders = loadEmbeddingsMaps(parsedArgs.embeddingsDirname).map { preEmbeddingsMap ->
     EnsembleTokensEncoderModel.ComponentModel(model = buildEmbeddingsEncoder(preEmbeddingsMap, 0.0), trainable = false)
   }
   val charLMEncoder = EnsembleTokensEncoderModel.ComponentModel(
