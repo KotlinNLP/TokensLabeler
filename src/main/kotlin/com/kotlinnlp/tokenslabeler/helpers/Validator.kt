@@ -39,8 +39,9 @@ class Validator(
     this.testSentences.forEach { sentence ->
 
       sentence.tokens
+        .asSequence()
         .map { token -> token.label }
-        .zip(this.labeler.predict(BaseSentence(sentence)))
+        .zip(this.labeler.predict(BaseSentence(sentence)).asSequence())
         .forEach { (goldLabel, predictedLabel) ->
 
           if (predictedLabel.value == goldLabel.value) {

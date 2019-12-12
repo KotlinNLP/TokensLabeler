@@ -139,9 +139,9 @@ class TokensLabeler(
 
     var prev: Label? = null
 
-    return predictions.indices.map { tokenIndex ->
+    return predictions.mapIndexed { tokenIndex, prediction ->
 
-      prev = predictions[tokenIndex].argSorted(reverse = true)
+      prev = prediction.argSorted(reverse = true)
         .asSequence()
         .map { this.model.outputLabels.getElement(it)!! }
         .first {
