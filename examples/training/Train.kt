@@ -106,13 +106,11 @@ private fun buildTokensEncoderModel(
     model = buildGazetteersEncoder(parsedArgs),
     trainable = true)
 
-  return TokensEncoderWrapperModel(
-    model = EnsembleTokensEncoderModel(
-      components = embeddingsEncoders + charLMEncoder + gazetteersEncoder,
-      outputMergeConfiguration = AffineMerge(
-        outputSize = parsedArgs.tokensEncodingSize,
-        activationFunction = null)),
-    converter = MirrorConverter())
+  return EnsembleTokensEncoderModel(
+    components = embeddingsEncoders + charLMEncoder + gazetteersEncoder,
+    outputMergeConfiguration = AffineMerge(
+      outputSize = parsedArgs.tokensEncodingSize,
+      activationFunction = null))
 }
 
 /**
