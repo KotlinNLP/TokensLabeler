@@ -11,6 +11,7 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.BIEOUTag
 import com.kotlinnlp.tokenslabeler.language.Label
+import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import com.kotlinnlp.utils.BeamManager
 import com.kotlinnlp.utils.DictionarySet
 import com.kotlinnlp.utils.notEmptyOr

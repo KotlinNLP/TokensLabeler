@@ -12,7 +12,7 @@ import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
-import com.kotlinnlp.tokenslabeler.helpers.ScoredLabel
+import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import com.kotlinnlp.tokenslabeler.language.BIEOUTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 
