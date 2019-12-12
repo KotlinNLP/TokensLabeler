@@ -15,7 +15,7 @@ import java.io.Serializable
  * @property type the BIEOU tag
  * @property value the name of the label (e.g. "PER", "LOC", "ORG")
  */
-data class Label(var type: BIEOUTag, var value: String = EMPTY_VALUE) : Serializable {
+open class Label(var type: BIEOUTag, var value: String = EMPTY_VALUE) : Serializable {
 
   companion object {
 
@@ -38,4 +38,13 @@ data class Label(var type: BIEOUTag, var value: String = EMPTY_VALUE) : Serializ
     "${this.type.annotation}-${this.value}"
   else
     this.type.annotation
+
+  override fun hashCode(): Int = this.type.hashCode() + 31 * this.value.hashCode()
+
+  override fun equals(other: Any?): Boolean {
+
+    if (other !is Label) return false
+
+    return this.type == other.type && this.value == other.value
+  }
 }
