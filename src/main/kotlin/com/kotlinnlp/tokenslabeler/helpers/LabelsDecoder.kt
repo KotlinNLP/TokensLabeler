@@ -31,7 +31,7 @@ internal class LabelsDecoder(
   maxBeamSize: Int = 5,
   maxForkSize: Int = 3,
   maxIterations: Int = 10
-) : BeamManager<LabelsDecoder.ScoredLabel, LabelsDecoder.LabeledState>(
+) : BeamManager<ScoredLabel, LabelsDecoder.LabeledState>(
   valuesMap = getValuesMap(predictions, model.outputLabels),
   maxBeamSize = maxBeamSize,
   maxForkSize = maxForkSize,
@@ -80,13 +80,6 @@ internal class LabelsDecoder(
   }
 
   /**
-   * An label of a state
-   *
-   * @property score the score
-   */
-  internal data class ScoredLabel(val label: Label, override var score: Double) : Value()
-
-  /**
    * The state that contains the configuration of a possible [ScoredLabel].
    *
    * @param elements the list of elements in this state, sorted by diff score
@@ -102,7 +95,9 @@ internal class LabelsDecoder(
      * Whether the state contains a correct sequence according to the constraints of the chosen BIEOU annotation schema.
      */
     override var isValid: Boolean =
-      sequenceOf(null).plus(this.elements.indices.asSequence().map { i -> this.getElement(i).value.label }).plus(sequenceOf(null))
+      sequenceOf(null)
+        .plus(this.elements.indices.asSequence().map { i -> this.getElement(i).value })
+        .plus(sequenceOf(null))
         .zipWithNext()
         .all { canFollow(prevLabel = it.first, curLabel = it.second) }
   }
