@@ -81,9 +81,11 @@ class DatasetReader(
   }
 
   /**
+   * @param tags the tags that define the possible labels
    *
+   * @return the labels defined by the given tags set
    */
-  private fun getLabels(tags: List<String>): MutableList<Label> {
+  private fun getLabels(tags: List<String>): List<Label> {
 
     val labels = mutableListOf<Label>()
 
@@ -96,7 +98,7 @@ class DatasetReader(
         value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE))
     }
 
-    return labels
+    return labels.toList()
   }
 
   /**
@@ -142,13 +144,13 @@ class DatasetReader(
   /**
    * Enrich the annotation with the "O Plus".
    */
-  private fun MutableList<Label>.setOPlus() = this.zipWithNext { a, b ->
+  private fun List<Label>.setOPlus() = this.zipWithNext { a, b ->
     if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside) a.value = b.value
   }
 
   /**
    * Enrich the annotation with the "O Plus".
    */
-  private fun MutableList<Label>.convertToBIEOU() =
+  private fun List<Label>.convertToBIEOU() =
     this.zipWithNext { cur, next -> cur.type = convertTag(cur.type, next.type) }
 }
