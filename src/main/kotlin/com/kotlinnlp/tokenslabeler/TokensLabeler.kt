@@ -12,9 +12,9 @@ import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
+import com.kotlinnlp.tokenslabeler.helpers.ScoredLabel
 import com.kotlinnlp.tokenslabeler.language.BIEOUTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
-import com.kotlinnlp.tokenslabeler.language.Label
 
 /**
  * The Tokens Labeler.
@@ -63,9 +63,9 @@ class TokensLabeler(
   /**
    * @param input the sentence
    *
-   * @return a list of labels, one for each token of the sentence
+   * @return a list of scored labels, one for each token of the sentence
    */
-  fun predict(input: BaseSentence): List<Label> {
+  fun predict(input: BaseSentence): List<ScoredLabel> {
 
     val output: List<DenseNDArray> = this.forward(input)
 
@@ -82,7 +82,7 @@ class TokensLabeler(
       bestState.elements
         .asSequence()
         .sortedBy { it.id }
-        .map { it.value.label }
+        .map { it.value }
         .toList()
     else
       greedyDecode(output)
@@ -135,15 +135,15 @@ class TokensLabeler(
    *
    * @return a valid sequence of labels
    */
-  private fun greedyDecode(predictions: List<DenseNDArray>): List<Label> {
+  private fun greedyDecode(predictions: List<DenseNDArray>): List<ScoredLabel> {
 
-    var prev: Label? = null
+    var prev: ScoredLabel? = null
 
     return predictions.mapIndexed { tokenIndex, prediction ->
 
       prev = prediction.argSorted(reverse = true)
         .asSequence()
-        .map { this.model.outputLabels.getElement(it)!! }
+        .map { i -> ScoredLabel(label = this.model.outputLabels.getElement(i)!!, score = prediction[i]) }
         .first {
           LabelsDecoder.canFollow(prevLabel = prev, curLabel = it) &&
             (tokenIndex != predictions.lastIndex || it.type in finalTags )
