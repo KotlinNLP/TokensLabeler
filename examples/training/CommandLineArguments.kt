@@ -41,15 +41,6 @@ class CommandLineArguments(args: Array<String>) {
   ) { toInt() }.default(30)
 
   /**
-   * The size of the batches of sentences (default = 1).
-   */
-  val batchSize: Int by parser.storing(
-    "-b",
-    "--batch-size",
-    help="the size of the batches of sentences (default = 1)"
-  ) { toInt() }.default(1)
-
-  /**
    * The maximum number of sentences to load for training (default unlimited)
    */
   val maxSentences: Int? by parser.storing(
@@ -128,15 +119,6 @@ class CommandLineArguments(args: Array<String>) {
     "--tokens-encoding-size",
     help="the size of the tokens encoding vectors (default 100)"
   ){ toInt() }.default(100)
-
-  /**
-   * Whether to do not show details about the training.
-   */
-  val quiet: Boolean by parser.flagging(
-    "-q",
-    "--quiet",
-    help="whether to do not show details about the training "
-  )
 
   /**
    * Force parsing all arguments (only read ones are parsed by default).
