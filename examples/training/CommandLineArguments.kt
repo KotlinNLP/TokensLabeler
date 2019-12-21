@@ -86,12 +86,12 @@ class CommandLineArguments(args: Array<String>) {
   )
 
   /**
-   * The path of the file from which to load the serialized CharLM model.
+   * The path of the file from which to load the serialized dircet CharLM model.
    */
-  val charModelPath: String by parser.storing(
+  val dirCharModelPath: String by parser.storing(
     "-c",
-    "--charlm",
-    help="the path of the file from which to load the serialized CharLM model"
+    "--charlm-dir",
+    help="the path of the file from which to load the serialized dircet CharLM model"
   )
 
   /**

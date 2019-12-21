@@ -157,7 +157,7 @@ fun buildEmbeddingsEncoder(embeddingsMap: EmbeddingsMap<String>, dropout: Double
  */
 fun buildCharLMEncoder(parsedArgs: CommandLineArguments) = TokensEncoderWrapperModel(
   model = CharLMEncoderModel(
-    charLM = CharLM.load(FileInputStream(File(parsedArgs.charModelPath))),
+    dirCharLM = CharLM.load(FileInputStream(File(parsedArgs.dirCharModelPath))),
     revCharLM = CharLM.load(FileInputStream(File(parsedArgs.revCharModelPath))),
     outputMergeConfiguration = ConcatMerge()),
   converter = FormConverter())
