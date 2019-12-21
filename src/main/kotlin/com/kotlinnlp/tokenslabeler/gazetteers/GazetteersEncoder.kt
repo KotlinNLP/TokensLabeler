@@ -11,7 +11,6 @@ import com.kotlinnlp.linguisticdescription.morphology.MorphologicalAnalysis
 import com.kotlinnlp.linguisticdescription.morphology.Morphology
 import com.kotlinnlp.linguisticdescription.morphology.POS
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
-import com.kotlinnlp.linguisticdescription.sentence.Sentence
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.morphologicalanalyzer.MorphologicalAnalyzer
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
@@ -37,7 +36,7 @@ class GazetteersEncoder(
   override val model: GazetteersEncoderModel,
   override val useDropout: Boolean,
   override val id: Int = 0
-) : TokensEncoder<BaseToken, BaseSentence>(model) {
+) : TokensEncoder<BaseToken, BaseSentence>() {
 
   /**
    * The position of a token within an entity.
@@ -83,27 +82,27 @@ class GazetteersEncoder(
        */
       operator fun invoke(pos: POS, position: TokenEntityPosition): EntityType = when(position) {
         TokenEntityPosition.B -> when(pos) {
-          POS.NounProperLoc -> EntityType.LOC_B
-          POS.NounProperOrg -> EntityType.ORG_B
-          POS.NounProperPer -> EntityType.PER_B
+          POS.NounProperLoc -> LOC_B
+          POS.NounProperOrg -> ORG_B
+          POS.NounProperPer -> PER_B
           else -> throw RuntimeException("Invalid entity type: $pos")
         }
         TokenEntityPosition.I -> when(pos) {
-          POS.NounProperLoc -> EntityType.LOC_I
-          POS.NounProperOrg -> EntityType.ORG_I
-          POS.NounProperPer -> EntityType.PER_I
+          POS.NounProperLoc -> LOC_I
+          POS.NounProperOrg -> ORG_I
+          POS.NounProperPer -> PER_I
           else -> throw RuntimeException("Invalid entity type: $pos")
         }
         TokenEntityPosition.E -> when(pos) {
-          POS.NounProperLoc -> EntityType.LOC_E
-          POS.NounProperOrg -> EntityType.ORG_E
-          POS.NounProperPer -> EntityType.PER_E
+          POS.NounProperLoc -> LOC_E
+          POS.NounProperOrg -> ORG_E
+          POS.NounProperPer -> PER_E
           else -> throw RuntimeException("Invalid entity type: $pos")
         }
         TokenEntityPosition.U -> when(pos) {
-          POS.NounProperLoc -> EntityType.LOC_U
-          POS.NounProperOrg -> EntityType.ORG_U
-          POS.NounProperPer -> EntityType.PER_U
+          POS.NounProperLoc -> LOC_U
+          POS.NounProperOrg -> ORG_U
+          POS.NounProperPer -> PER_U
           else -> throw RuntimeException("Invalid entity type: $pos")
         }
         else -> throw RuntimeException("Factory cannot be used for the OUT entity type.")
