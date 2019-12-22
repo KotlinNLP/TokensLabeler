@@ -11,6 +11,7 @@ import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
+import com.kotlinnlp.utils.progressindicator.ProgressIndicatorBar
 
 /**
  * The Validator.
@@ -33,10 +34,13 @@ class Validator(
    */
   fun evaluate(): Map<String, LabelStatistics> {
 
+    val progress = ProgressIndicatorBar(this.testSentences.size)
     val out = mutableMapOf(*this.model.outputLabels.getElements()
       .map { Pair(it.value, LabelStatistics(it.value)) }.toTypedArray())
 
     this.testSentences.forEach { sentence ->
+
+      progress.tick()
 
       sentence.tokens
         .asSequence()
