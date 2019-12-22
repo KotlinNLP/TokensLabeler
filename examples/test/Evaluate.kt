@@ -41,6 +41,7 @@ fun main(args: Array<String>) {
 
   val validator = Validator(model = model, testSentences = testSentences)
 
+  println("\nEvaluating the model on ${testSentences.size} test sentences...")
   val statistics: Map<String, LabelStatistics> = validator.evaluate()
   val accuracy: Double = statistics.values.sumByDouble { it.f1 } / statistics.size
 
