@@ -130,6 +130,8 @@ class TokensLabeler(
   /**
    * Validate this sequence of labels removing invalid sub-sequences of labels.
    *
+   * @param predictions the predictions made for each token
+   *
    * @return a valid sequence of labels
    */
   private fun greedyDecode(predictions: List<DenseNDArray>): List<ScoredLabel> {
