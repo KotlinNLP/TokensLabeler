@@ -12,6 +12,7 @@ import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
 import com.kotlinnlp.tokenslabeler.helpers.LabelStatistics
 import com.kotlinnlp.tokenslabeler.helpers.Validator
 import com.kotlinnlp.tokenslabeler.language.*
+import com.kotlinnlp.utils.Timer
 import java.io.File
 import java.io.FileInputStream
 
@@ -40,10 +41,12 @@ fun main(args: Array<String>) {
   ).loadSentences()
 
   val validator = Validator(model = model, testSentences = testSentences)
+  val timer = Timer()
 
   println("\nEvaluating the model on ${testSentences.size} test sentences...")
   val statistics: Map<String, LabelStatistics> = validator.evaluate()
   val accuracy: Double = statistics.values.sumByDouble { it.f1 } / statistics.size
+  println("Elapsed time: ${timer.formatElapsedTime()}")
 
   println()
   statistics.values.forEach { println(it) }
