@@ -16,7 +16,7 @@ import java.io.File
 import java.io.FileInputStream
 
 /**
- * Perform the validation of the model on a test set.
+ * Evaluate a [TokensLabelerModel] on a test set.
  *
  * Command line arguments:
  *   1. The model
