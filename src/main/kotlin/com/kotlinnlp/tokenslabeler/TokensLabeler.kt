@@ -76,16 +76,13 @@ class TokensLabeler(
       maxForkSize = 5,
       maxIterations = 10)
 
-    val bestState: LabelsDecoder.LabeledState = decoder.findBestConfiguration(onlyValid = false)!!
-
-    return if (bestState.isValid)
-      bestState.elements
-        .asSequence()
-        .sortedBy { it.id }
-        .map { it.value }
-        .toList()
-    else
-      greedyDecode(output)
+    return decoder.findBestConfiguration(onlyValid = true)
+      ?.elements
+      ?.asSequence()
+      ?.sortedBy { it.id }
+      ?.map { it.value }
+      ?.toList()
+      ?: greedyDecode(output)
   }
 
   /**
