@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
     "Required 2 arguments: <labeler_model_filename> <test_set_filename>"
   }
 
-  println("Loading model \"${args[0]}\"...")
+  println("Loading model from \"${args[0]}\"...")
   val model = TokensLabelerModel.load(FileInputStream(File(args[0])))
 
   val testSentences: List<AnnotatedSentence> = DatasetReader(
@@ -36,13 +36,16 @@ fun main(args: Array<String>) {
     filePath = args[1],
     useOPlus = false,
     useBIEOU = true,
-    maxSentences = null).loadSentences()
+    maxSentences = null
+  ).loadSentences()
 
   val validator = Validator(model = model, testSentences = testSentences)
 
   val statistics: Map<String, LabelStatistics> = validator.evaluate()
   val accuracy: Double = statistics.values.sumByDouble { it.f1 } / statistics.size
 
-  statistics.forEach { _, stats: LabelStatistics -> println(stats) }
-  println("\n\nACCURACY: %.2f".format(accuracy))
+  println()
+  statistics.values.forEach { println(it) }
+
+  println("\nACCURACY: %.2f %%".format(100.0 * accuracy))
 }

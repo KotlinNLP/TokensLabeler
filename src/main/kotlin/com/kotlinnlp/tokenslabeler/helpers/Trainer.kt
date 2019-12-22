@@ -178,7 +178,7 @@ class Trainer(
 
     if (accuracy > this.bestAccuracy) {
 
-      println("\nNEW BEST ACCURACY (%.2f)! Saving model to \"${this.modelFilename}\"...".format(100.0 * accuracy))
+      println("\nNEW BEST ACCURACY (%.2f %%)! Saving model to \"${this.modelFilename}\"...".format(100.0 * accuracy))
       this.model.dump(FileOutputStream(File(this.modelFilename)))
 
       this.bestAccuracy = accuracy
