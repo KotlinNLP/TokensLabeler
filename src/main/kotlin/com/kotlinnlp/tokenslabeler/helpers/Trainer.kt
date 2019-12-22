@@ -172,8 +172,8 @@ class Trainer(
     val accuracy: Double = statistics.values.sumByDouble { it.f1 } / statistics.size
 
     if (this.verbose) {
-      statistics.values.forEach { println(it) }
       println()
+      statistics.values.forEach { println(it) }
     }
 
     if (accuracy > this.bestAccuracy) {
