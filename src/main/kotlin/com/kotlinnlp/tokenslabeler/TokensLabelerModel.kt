@@ -34,7 +34,7 @@ import java.io.Serializable
  * @param biRNNConnectionType type of recurrent neural network (e.g. LSTM, GRU, CFN, SimpleRNN)
  * @param biRNNActivation the activation function of the hidden layer
  * @param biRNNHiddenSize the size of the hidden layer of the recurrent network
- * @param biRNNLayers number of stacked BiRNNs (default 1)
+ * @param numOfBiRNNLayers the number of stacked BiRNNs (default 1)
  * @param inputDropout the probability of the recurrent dropout (default 0.0)
  * @property outputLabels the set of output labels
  * @param labelerDropout the dropout of the final output layer
@@ -47,13 +47,18 @@ class TokensLabelerModel(
   biRNNConnectionType: LayerType.Connection,
   biRNNActivation: ActivationFunction?,
   biRNNHiddenSize: Int,
-  biRNNLayers: Int = 1,
+  numOfBiRNNLayers: BiRNNLayersNumber = BiRNNLayersNumber.Single,
   inputDropout: Double = 0.0,
   val outputLabels: DictionarySet<Label>,
   labelerDropout: Double = 0.0,
   weightsInitializer: Initializer? = GlorotInitializer(),
   biasesInitializer: Initializer? = null
 ) : Serializable {
+
+  /**
+   * The number of stacked BiRNNs.
+   */
+  enum class BiRNNLayersNumber { Single, Double }
 
   companion object {
 
@@ -73,10 +78,6 @@ class TokensLabelerModel(
     fun load(inputStream: InputStream): TokensLabelerModel = Serializer.deserialize(inputStream)
   }
 
-  init {
-    require(biRNNLayers in 1..2) { "Invalid number of BiRNN layers: $biRNNLayers}" }
-  }
-
   /**
    * The [biRNN] output size coincides with the number of output labels
    */
@@ -85,11 +86,26 @@ class TokensLabelerModel(
   /**
    * The BiRNN.
    */
-  val biRNN = if (biRNNLayers == 2) {
+  val biRNN = if (numOfBiRNNLayers == BiRNNLayersNumber.Single) {
     DeepBiRNN(
       BiRNN(
         inputType = LayerType.Input.Dense,
-        inputSize = tokensEncoderModel.tokenEncodingSize,
+        inputSize = this.tokensEncoderModel.tokenEncodingSize,
+        dropout = inputDropout,
+        recurrentConnectionType = biRNNConnectionType,
+        hiddenSize = biRNNHiddenSize,
+        hiddenActivation = biRNNActivation,
+        outputMergeConfiguration = ConcatFeedforwardMerge(
+          outputSize = this.outputSize,
+          activationFunction = Softmax(),
+          dropout = labelerDropout),
+        weightsInitializer = weightsInitializer,
+        biasesInitializer = biasesInitializer))
+  } else {
+    DeepBiRNN(
+      BiRNN(
+        inputType = LayerType.Input.Dense,
+        inputSize = this.tokensEncoderModel.tokenEncodingSize,
         dropout = inputDropout,
         recurrentConnectionType = biRNNConnectionType,
         hiddenSize = biRNNHiddenSize,
@@ -104,22 +120,7 @@ class TokensLabelerModel(
         hiddenSize = biRNNHiddenSize,
         hiddenActivation = biRNNActivation,
         outputMergeConfiguration = ConcatFeedforwardMerge(
-          outputSize = outputSize,
-          activationFunction = Softmax(),
-          dropout = labelerDropout),
-        weightsInitializer = weightsInitializer,
-        biasesInitializer = biasesInitializer))
-  } else {
-    DeepBiRNN(
-      BiRNN(
-        inputType = LayerType.Input.Dense,
-        inputSize = tokensEncoderModel.tokenEncodingSize,
-        dropout = inputDropout,
-        recurrentConnectionType = biRNNConnectionType,
-        hiddenSize = biRNNHiddenSize,
-        hiddenActivation = biRNNActivation,
-        outputMergeConfiguration = ConcatFeedforwardMerge(
-          outputSize = outputSize,
+          outputSize = this.outputSize,
           activationFunction = Softmax(),
           dropout = labelerDropout),
         weightsInitializer = weightsInitializer,
