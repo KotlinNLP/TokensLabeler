@@ -73,41 +73,35 @@ class DatasetReader(
       line.split("\t").let { Pair(it[0], it[1]) }
     }.unzip()
 
-    val labels = this.getLabels(annotations)
-    if (this.useBIEOU) labels.convertToBIEOU()
-    if (this.useOPlus) labels.setOPlus()
+    val labels = this.buildLabels(annotations).also {
+      if (this.useBIEOU) convertToBIEOU(it)
+      if (this.useOPlus) setOPlus(it)
+    }
 
     return BaseSentence(forms).toAnnotatedSentence(labels)
   }
 
   /**
-   * @param tags the tags that define the possible labels
+   * @param annotations the annotations of the labels of a sentence
    *
-   * @return the labels defined by the given tags set
+   * @return the labels defined with the given annotations
    */
-  private fun getLabels(tags: List<String>): List<Label> {
+  private fun buildLabels(annotations: List<String>): List<Label> = annotations.map {
 
-    val labels = mutableListOf<Label>()
+    val value: String = it.replace(Regex("^B-|^I-|^O"), "")
 
-    tags.indices.forEach { i ->
-
-      val value: String = tags[i].replace(Regex("^B-|^I-|^O"), "")
-
-      labels.add(Label(
-        type = tags[i].toTag()!!,
-        value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE))
-    }
-
-    return labels.toList()
+    Label(
+      type = it.getBIOTag(),
+      value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE)
   }
 
   /**
-   * @return the tag in the BIO format
+   * @throws IllegalArgumentException if this string does not define a BIO tag
+   *
+   * @return the BIO tag defined in this string
    */
-  private fun String?.toTag(): BIEOUTag? =
-    if (this == null)
-      null
-    else when {
+  private fun String.getBIOTag(): BIEOUTag =
+    when {
       this.startsWith("O") -> BIEOUTag.Outside
       this.startsWith("B-") -> BIEOUTag.Beginning
       this.startsWith("I-") -> BIEOUTag.Inside
@@ -115,42 +109,20 @@ class DatasetReader(
     }
 
   /**
-   * Convert the [tag] from the BIO to the BIEOU format.
+   * Enrich labels with the "O Plus" annotation.
    *
-   * @param tag the current tag
-   * @param nextTag the next tag
-   *
-   * @return the converted tag
+   * @param labels the list of labels of a sentence
    */
-  private fun convertTag(tag: BIEOUTag, nextTag: BIEOUTag?): BIEOUTag {
-    return if (nextTag != null)
-      when {
-        tag == BIEOUTag.Outside -> BIEOUTag.Outside
-        tag == BIEOUTag.Beginning && nextTag != BIEOUTag.Inside -> BIEOUTag.Unit
-        tag == BIEOUTag.Beginning && nextTag == BIEOUTag.Inside -> BIEOUTag.Beginning
-        tag == BIEOUTag.Inside && nextTag == BIEOUTag.Inside -> BIEOUTag.Inside
-        tag == BIEOUTag.Inside && nextTag != BIEOUTag.Inside -> BIEOUTag.End
-        else -> throw IllegalArgumentException("Unexpected tag")
-      }
-    else
-      when (tag) {
-        BIEOUTag.Outside -> BIEOUTag.Outside
-        BIEOUTag.Inside -> BIEOUTag.End
-        BIEOUTag.Beginning -> BIEOUTag.Unit
-        else -> throw IllegalArgumentException("Unexpected tag")
-      }
-  }
-
-  /**
-   * Enrich the annotation with the "O Plus".
-   */
-  private fun List<Label>.setOPlus() = this.zipWithNext { a, b ->
+  private fun setOPlus(labels: List<Label>) = labels.zipWithNext { a, b ->
     if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside) a.value = b.value
   }
 
   /**
-   * Enrich the annotation with the "O Plus".
+   * Convert labels from the BIO to the BIEOU format.
+   *
+   * @param labels the list of labels of a sentence
    */
-  private fun List<Label>.convertToBIEOU() =
-    this.zipWithNext { cur, next -> cur.type = convertTag(cur.type, next.type) }
+  private fun convertToBIEOU(labels: List<Label>) {
+    labels.zipWithNext { cur, next -> cur.type = cur.type.toBIEOU(next.type) }
+  }
 }
