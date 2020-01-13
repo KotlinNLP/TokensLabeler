@@ -9,8 +9,8 @@ package test
 
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
-import com.kotlinnlp.tokenslabeler.helpers.LabelStatistics
-import com.kotlinnlp.tokenslabeler.helpers.Validator
+import com.kotlinnlp.tokenslabeler.helpers.Evaluator
+import com.kotlinnlp.tokenslabeler.helpers.LabelsStatistics
 import com.kotlinnlp.tokenslabeler.language.*
 import com.kotlinnlp.utils.Timer
 import java.io.File
@@ -40,16 +40,15 @@ fun main(args: Array<String>) {
     maxSentences = null
   ).loadSentences()
 
-  val validator = Validator(model = model, testSentences = testSentences)
+  val evaluator = Evaluator(model = model, testSentences = testSentences)
   val timer = Timer()
 
   println("\nEvaluating the model on ${testSentences.size} test sentences...")
-  val statistics: Map<String, LabelStatistics> = validator.evaluate()
-  val accuracy: Double = statistics.values.sumByDouble { it.f1 } / statistics.size
+  val statistics: LabelsStatistics = evaluator.evaluate()
   println("Elapsed time: ${timer.formatElapsedTime()}")
 
   println()
-  statistics.values.forEach { println(it) }
+  println(statistics)
 
-  println("\nACCURACY: %.2f %%".format(100.0 * accuracy))
+  println("\nACCURACY: %.2f %%".format(100.0 * statistics.accuracy))
 }

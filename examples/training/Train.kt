@@ -26,7 +26,7 @@ import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.gazetteers.GazetteersEncoderModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
 import com.kotlinnlp.tokenslabeler.helpers.Trainer
-import com.kotlinnlp.tokenslabeler.helpers.Validator
+import com.kotlinnlp.tokenslabeler.helpers.Evaluator
 import com.kotlinnlp.tokenslabeler.language.*
 import com.xenomachina.argparser.mainBody
 import java.io.File
@@ -71,15 +71,15 @@ fun main(args: Array<String>) = mainBody {
     labelerDropout = 0.0,
     outputLabels = dictionary.labels)
 
-  val trainer = Trainer(
+  Trainer(
     model = model,
     modelFilename = parsedArgs.modelPath,
+    dataset = trainingSentences,
     epochs = parsedArgs.epochs,
     updateMethod = ADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
-    validator = Validator(model = model, testSentences = testSentences),
-    verbose = true)
-
-  trainer.train(trainingSentences)
+    evaluator = Evaluator(model = model, testSentences = testSentences),
+    verbose = true
+  ).train()
 }
 
 /**
