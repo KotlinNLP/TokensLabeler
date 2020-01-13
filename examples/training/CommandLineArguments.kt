@@ -89,7 +89,7 @@ class CommandLineArguments(args: Array<String>) {
    * The path of the pre-trained word embeddings.
    */
   val embeddingsPath: String by parser.storing(
-    "-e",
+    "-w",
     "--embeddings",
     help="the path of the pre-trained word embeddings"
   )
