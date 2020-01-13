@@ -128,7 +128,7 @@ class Trainer(
    */
   private fun trainExample(example: AnnotatedSentence) {
 
-    val output = this.annotator.forward(BaseSentence(example))
+    val output: List<DenseNDArray> = this.annotator.forward(BaseSentence(example))
 
     val errors: List<DenseNDArray> = output.zip(example.tokens).map { (distribution, token) ->
 

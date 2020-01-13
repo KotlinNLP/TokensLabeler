@@ -145,7 +145,7 @@ class TokensLabeler(
         .map { i -> ScoredLabel(label = this.model.outputLabels.getElement(i)!!, score = prediction[i]) }
         .first {
           LabelsDecoder.canFollow(prevLabel = prev, curLabel = it) &&
-            (tokenIndex != predictions.lastIndex || it.type in finalTags )
+            (tokenIndex != predictions.lastIndex || it.type in finalTags)
         }
 
       prev!!
