@@ -77,24 +77,6 @@ class CommandLineArguments(args: Array<String>) {
   )
 
   /**
-   * The path of the file from which to load the serialized dircet CharLM model.
-   */
-  val dirCharModelPath: String by parser.storing(
-    "-c",
-    "--charlm-dir",
-    help="the path of the file from which to load the serialized dircet CharLM model"
-  )
-
-  /**
-   * The path of the file in which to load the serialized CharLM model trained by reverse.
-   */
-  val revCharModelPath: String by parser.storing(
-    "-r",
-    "--charlm-rev",
-    help="the path of the file in which to load the serialized CharLM model trained by reverse"
-  )
-
-  /**
    * The file path of the serialized gazetteers dictionary.
    */
   val gazetteersPath: String? by parser.storing(
