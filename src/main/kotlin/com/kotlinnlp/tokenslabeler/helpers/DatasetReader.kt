@@ -92,7 +92,7 @@ class DatasetReader(
   private fun buildLabels(annotations: List<String>): List<Label> = annotations.map {
 
     val value: String = it.replace(Regex("^B-|^I-|^O"), "")
-    val include: Boolean = this.includes != null && value.isNotEmpty() && value in this.includes
+    val include: Boolean = value.isNotEmpty() && (this.includes == null || value in this.includes)
 
     Label(
       type = if (include) it.getBIOTag() else BIEOUTag.Outside,
