@@ -100,16 +100,16 @@ class CommandLineArguments(args: Array<String>) {
   val gazetteersPath: String? by parser.storing(
     "-g",
     "--gazetteers",
-    help="the file path of the serialized gazetteers"
+    help="the file path of the serialized gazetteers dictionary"
   ).default { null }
 
   /**
-   * The directory which contains pre-trained word embeddings.
+   * The path of the pre-trained word embeddings.
    */
-  val embeddingsDirname: String by parser.storing(
+  val embeddingsPath: String by parser.storing(
     "-w",
     "--word-emb-dir",
-    help="the directory which contains pre-trained word embeddings"
+    help="the path of the pre-trained word embeddings"
   )
 
   /**
@@ -118,7 +118,7 @@ class CommandLineArguments(args: Array<String>) {
   val tokensEncodingSize: Int by parser.storing(
     "--tokens-encoding-size",
     help="the size of the tokens encoding vectors (default 100)"
-  ){ toInt() }.default(100)
+  ) { toInt() }.default(100)
 
   /**
    * Force parsing all arguments (only read ones are parsed by default).
