@@ -18,7 +18,9 @@ import java.io.InputStreamReader
  *
  * @param type the string that describes the type of sentences
  * @param filePath the file path
- * @param useOPlus whether to use the "O Plus" annotation
+ * @param useOPlus whether to convert labels to the "O Plus" annotation
+ * @param useBIEOU whether to convert labels to the "BIEOU" annotation
+ * @param includes a set of labels to include in the dataset (others will be ignored), null to include all
  * @param maxSentences the max number of sentences to load
  */
 class DatasetReader(
@@ -26,6 +28,7 @@ class DatasetReader(
   private val filePath: String,
   private val useOPlus: Boolean,
   private val useBIEOU: Boolean,
+  private val includes: Set<String>? = null,
   private val maxSentences: Int? = null
 ) {
 
@@ -89,10 +92,11 @@ class DatasetReader(
   private fun buildLabels(annotations: List<String>): List<Label> = annotations.map {
 
     val value: String = it.replace(Regex("^B-|^I-|^O"), "")
+    val include: Boolean = this.includes != null && value.isNotEmpty() && value in this.includes
 
     Label(
-      type = it.getBIOTag(),
-      value = if (value.isNotEmpty()) value else Label.EMPTY_VALUE)
+      type = if (include) it.getBIOTag() else BIEOUTag.Outside,
+      value = if (include) value else Label.EMPTY_VALUE)
   }
 
   /**
