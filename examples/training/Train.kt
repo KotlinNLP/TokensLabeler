@@ -27,6 +27,7 @@ import com.kotlinnlp.tokenslabeler.gazetteers.GazetteersEncoderModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
 import com.kotlinnlp.tokenslabeler.helpers.Trainer
 import com.kotlinnlp.tokenslabeler.helpers.Evaluator
+import com.kotlinnlp.tokenslabeler.helpers.LabelsStatistics
 import com.kotlinnlp.tokenslabeler.language.*
 import com.xenomachina.argparser.mainBody
 import java.io.File
@@ -78,6 +79,15 @@ fun main(args: Array<String>) = mainBody {
     evaluator = Evaluator(model = model, testSentences = testSentences),
     verbose = true
   ).train()
+
+  println("\nFINAL VALIDATION")
+
+  // Load the best model.
+  val validationModel = TokensLabelerModel.load(FileInputStream(File(parsedArgs.modelPath)))
+  val bestStats: LabelsStatistics = Evaluator(model = validationModel, testSentences = testSentences).evaluate()
+
+  println("\nBest statistics:")
+  println(bestStats)
 }
 
 /**
