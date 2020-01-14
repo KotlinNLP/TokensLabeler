@@ -35,7 +35,7 @@ class LabelsStatistics(labels: Set<String>) : Statistics() {
   /**
    * @return the string representation of this statistics
    */
-  override fun toString(): String = this.metrics.entries.joinToString("\n") { (label, metric) ->
-    "label: $label | $metric"
-  }
+  override fun toString(): String = this.metrics.entries
+    .sortedBy { it.key }
+    .joinToString("\n") { (label, metric) -> "label: $label | $metric" }
 }
