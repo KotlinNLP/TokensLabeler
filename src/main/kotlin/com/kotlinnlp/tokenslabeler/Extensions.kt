@@ -22,20 +22,17 @@ fun List<Label>.toSegments(): List<AnnotatedSegment> {
   val ends = mutableListOf<Int>()
   val annotations = mutableListOf<String>()
 
-  this.zipWithNext().forEachIndexed { tokenIndex, (curLabel, nextLabel) ->
+  (this + listOf(null)).zipWithNext().forEachIndexed { tokenIndex, (curLabel, nextLabel) ->
 
-    when {
+    curLabel!!
 
-      curLabel.type == IOBTag.Beginning -> {
-
-        starts.add(tokenIndex)
-        annotations.add(curLabel.value)
-
-        if (nextLabel.type == IOBTag.Outside) ends.add(tokenIndex)
-      }
-
-      curLabel.type == IOBTag.Inside && nextLabel.type == IOBTag.Outside -> ends.add(tokenIndex)
+    if (curLabel.type == IOBTag.Beginning) {
+      starts.add(tokenIndex)
+      annotations.add(curLabel.value)
     }
+
+    if (curLabel.type != IOBTag.Outside && (nextLabel == null || nextLabel.type != IOBTag.Inside))
+      ends.add(tokenIndex)
   }
 
   require(starts.size == ends.size)
