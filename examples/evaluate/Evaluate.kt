@@ -33,6 +33,7 @@ fun main(args: Array<String>) {
   val testSentences: List<AnnotatedSentence> = DatasetReader(
     type = "text",
     filePath = parsedArgs.validationSetPath,
+    includes = parsedArgs.includes?.split(",")?.toSet(),
     maxSentences = null
   ).loadSentences()
 

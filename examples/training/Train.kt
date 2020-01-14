@@ -44,11 +44,13 @@ fun main(args: Array<String>) = mainBody {
   val trainingSentences: List<AnnotatedSentence> = DatasetReader(
     type = "training",
     filePath = parsedArgs.trainingSetPath,
+    includes = parsedArgs.includes?.split(",")?.toSet(),
     maxSentences = parsedArgs.maxSentences).loadSentences()
 
   val testSentences: List<AnnotatedSentence> = DatasetReader(
     type = "test",
     filePath = parsedArgs.validationSetPath,
+    includes = parsedArgs.includes?.split(",")?.toSet(),
     maxSentences = null).loadSentences()
 
   val dictionary: CorpusDictionary = trainingSentences.let {

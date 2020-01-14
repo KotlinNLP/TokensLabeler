@@ -8,6 +8,7 @@
 package evaluate
 
 import com.xenomachina.argparser.ArgParser
+import com.xenomachina.argparser.default
 
 /**
  * The interpreter of command line arguments for the training script.
@@ -38,6 +39,15 @@ class CommandLineArguments(args: Array<String>) {
     "--validation-set",
     help="the file path of the validation set"
   )
+
+  /**
+   * A set of comma-separated labels to include in the dataset (others will be ignored).
+   */
+  val includes: String? by parser.storing(
+    "-i",
+    "--includes",
+    help="a set of comma-separated labels to include in the dataset (others will be ignored)"
+  ).default { null }
 
   /**
    * Force parsing all arguments (only read ones are parsed by default).

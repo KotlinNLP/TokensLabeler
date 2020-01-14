@@ -103,6 +103,15 @@ class CommandLineArguments(args: Array<String>) {
   ) { toInt() }.default(100)
 
   /**
+   * A set of comma-separated labels to include in the datasets (others will be ignored).
+   */
+  val includes: String? by parser.storing(
+    "-i",
+    "--includes",
+    help="a set of comma-separated labels to include in the datasets (others will be ignored)"
+  ).default { null }
+
+  /**
    * Force parsing all arguments (only read ones are parsed by default).
    */
   init {
