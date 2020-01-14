@@ -11,7 +11,9 @@ import com.kotlinnlp.simplednn.helpers.Evaluator
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
+import com.kotlinnlp.tokenslabeler.language.BIEOUTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
+import com.kotlinnlp.tokenslabeler.language.Label
 
 /**
  * The Validator.
@@ -37,7 +39,8 @@ class Evaluator(
   /**
    * The evaluation statistics.
    */
-  override val stats = LabelsStatistics(this.model.outputLabels.getElements().map { it.value })
+  override val stats = LabelsStatistics(
+    labels = this.model.outputLabels.getElements().filter { it.type != BIEOUTag.Outside }.map { it.value }.toSet())
 
   /**
    * Evaluate the model with a single example.
@@ -51,15 +54,32 @@ class Evaluator(
       .map { token -> token.label }
       .zip(this.labeler.predict(BaseSentence(example)).asSequence())
       .forEach { (goldLabel, predictedLabel) ->
-
-        if (predictedLabel.value == goldLabel.value) {
-          this.stats.metrics.getValue(goldLabel.value).truePos += 1
-        } else {
-          this.stats.metrics.getValue(goldLabel.value).falseNeg += 1
-          this.stats.metrics.getValue(predictedLabel.value).falsePos += 1
-        }
+        this.evaluatePrediction(predictedLabel = predictedLabel, goldLabel = goldLabel)
       }
 
     this.stats.accuracy = this.stats.metrics.values.sumByDouble { it.f1Score } / this.stats.metrics.size
+  }
+
+  /**
+   * Evaluate the prediction of a single label.
+   *
+   * @param predictedLabel the predicted label
+   * @param goldLabel the target label
+   */
+  private fun evaluatePrediction(predictedLabel: Label, goldLabel: Label) {
+
+    if (predictedLabel.value == goldLabel.value) {
+
+      if (goldLabel.type != BIEOUTag.Outside)
+        this.stats.metrics.getValue(goldLabel.value).truePos += 1
+
+    } else {
+
+      if (goldLabel.type != BIEOUTag.Outside)
+        this.stats.metrics.getValue(goldLabel.value).falseNeg += 1
+
+      if (predictedLabel.type != BIEOUTag.Outside)
+        this.stats.metrics.getValue(predictedLabel.value).falsePos += 1
+    }
   }
 }

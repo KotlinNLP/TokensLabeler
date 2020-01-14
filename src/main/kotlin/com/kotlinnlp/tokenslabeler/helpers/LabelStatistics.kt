@@ -15,7 +15,7 @@ import com.kotlinnlp.utils.stats.MetricCounter
  *
  * @param labels the possible labels
  */
-class LabelsStatistics(labels: List<String>) : Statistics() {
+class LabelsStatistics(labels: Set<String>) : Statistics() {
 
   /**
    * The metric counters per label.
