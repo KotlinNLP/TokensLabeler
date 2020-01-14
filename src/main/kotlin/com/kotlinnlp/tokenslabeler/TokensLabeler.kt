@@ -13,7 +13,7 @@ import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
 import com.kotlinnlp.tokenslabeler.language.ScoredLabel
-import com.kotlinnlp.tokenslabeler.language.BIEOUTag
+import com.kotlinnlp.tokenslabeler.language.IOBTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 
 /**
@@ -33,14 +33,6 @@ class TokensLabeler(
   List<DenseNDArray>, // ErrorsType
   NeuralProcessor.NoInputErrors // InputErrorsType
   > {
-
-  companion object {
-
-    /**
-     * Possible tags at the end of a sequence.
-     */
-    private val finalTags = setOf(BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End)
-  }
 
   /**
    * Not used because the input is a sentence.
@@ -145,7 +137,7 @@ class TokensLabeler(
         .map { i -> ScoredLabel(label = this.model.outputLabels.getElement(i)!!, score = prediction[i]) }
         .first {
           LabelsDecoder.canFollow(prevLabel = prev, curLabel = it) &&
-            (tokenIndex != predictions.lastIndex || it.type in finalTags)
+            (tokenIndex != predictions.lastIndex || it.type == IOBTag.Outside)
         }
 
       prev!!

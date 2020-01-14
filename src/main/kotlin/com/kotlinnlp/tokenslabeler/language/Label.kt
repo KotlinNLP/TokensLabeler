@@ -12,10 +12,10 @@ import java.io.Serializable
 /**
  * The Label.
  *
- * @property type the BIEOU tag
+ * @property type the IOB tag
  * @property value the name of the label (e.g. "PER", "LOC", "ORG")
  */
-open class Label(var type: BIEOUTag, var value: String = EMPTY_VALUE) : Serializable {
+open class Label(var type: IOBTag, var value: String = EMPTY_VALUE) : Serializable {
 
   companion object {
 

@@ -36,7 +36,6 @@ fun main(args: Array<String>) {
     type = "test",
     filePath = args[1],
     useOPlus = false,
-    useBIEOU = false,
     maxSentences = null
   ).loadSentences()
 

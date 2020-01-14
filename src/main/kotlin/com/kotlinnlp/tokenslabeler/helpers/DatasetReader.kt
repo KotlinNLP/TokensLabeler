@@ -19,7 +19,6 @@ import java.io.InputStreamReader
  * @param type the string that describes the type of sentences
  * @param filePath the file path
  * @param useOPlus whether to convert labels to the "O Plus" annotation
- * @param useBIEOU whether to convert labels to the "BIEOU" annotation
  * @param includes a set of labels to include in the dataset (others will be ignored), null to include all
  * @param maxSentences the max number of sentences to load
  */
@@ -27,7 +26,6 @@ class DatasetReader(
   private val type: String,
   private val filePath: String,
   private val useOPlus: Boolean,
-  private val useBIEOU: Boolean,
   private val includes: Set<String>? = null,
   private val maxSentences: Int? = null
 ) {
@@ -77,7 +75,6 @@ class DatasetReader(
     }.unzip()
 
     val labels = this.buildLabels(annotations).also {
-      if (this.useBIEOU) convertToBIEOU(it)
       if (this.useOPlus) setOPlus(it)
     }
 
@@ -95,20 +92,20 @@ class DatasetReader(
     val include: Boolean = value.isNotEmpty() && (this.includes == null || value in this.includes)
 
     Label(
-      type = if (include) it.getBIOTag() else BIEOUTag.Outside,
+      type = if (include) it.getIOBTag() else IOBTag.Outside,
       value = if (include) value else Label.EMPTY_VALUE)
   }
 
   /**
-   * @throws IllegalArgumentException if this string does not define a BIO tag
+   * @throws IllegalArgumentException if this string does not define a IOB tag
    *
-   * @return the BIO tag defined in this string
+   * @return the IOB tag defined in this string
    */
-  private fun String.getBIOTag(): BIEOUTag =
+  private fun String.getIOBTag(): IOBTag =
     when {
-      this.startsWith("O") -> BIEOUTag.Outside
-      this.startsWith("B-") -> BIEOUTag.Beginning
-      this.startsWith("I-") -> BIEOUTag.Inside
+      this.startsWith("O") -> IOBTag.Outside
+      this.startsWith("B-") -> IOBTag.Beginning
+      this.startsWith("I-") -> IOBTag.Inside
       else -> throw IllegalArgumentException("Unexpected tag")
     }
 
@@ -118,15 +115,6 @@ class DatasetReader(
    * @param labels the list of labels of a sentence
    */
   private fun setOPlus(labels: List<Label>) = labels.zipWithNext { a, b ->
-    if (a.type == BIEOUTag.Outside && b.type != BIEOUTag.Outside) a.value = b.value
-  }
-
-  /**
-   * Convert labels from the BIO to the BIEOU format.
-   *
-   * @param labels the list of labels of a sentence
-   */
-  private fun convertToBIEOU(labels: List<Label>) {
-    labels.zipWithNext { cur, next -> cur.type = cur.type.toBIEOU(next.type) }
+    if (a.type == IOBTag.Outside && b.type != IOBTag.Outside) a.value = b.value
   }
 }

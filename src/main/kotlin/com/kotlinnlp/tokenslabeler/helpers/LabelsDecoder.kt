@@ -9,7 +9,7 @@ package com.kotlinnlp.tokenslabeler.helpers
 
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
-import com.kotlinnlp.tokenslabeler.language.BIEOUTag
+import com.kotlinnlp.tokenslabeler.language.IOBTag
 import com.kotlinnlp.tokenslabeler.language.Label
 import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import com.kotlinnlp.utils.BeamManager
@@ -62,12 +62,10 @@ internal class LabelsDecoder(
      * Map each tag with all the tags that it can follow.
      */
     private val validPrevious = mapOf(
-      BIEOUTag.Outside to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
-      BIEOUTag.Unit to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
-      BIEOUTag.Beginning to setOf(null, BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End),
-      BIEOUTag.Inside to setOf(BIEOUTag.Beginning, BIEOUTag.Inside),
-      BIEOUTag.End to setOf(BIEOUTag.Beginning, BIEOUTag.Inside),
-      null to setOf(BIEOUTag.Outside, BIEOUTag.Unit, BIEOUTag.End))
+      IOBTag.Beginning to setOf(null, IOBTag.Outside, IOBTag.Inside, IOBTag.Beginning),
+      IOBTag.Outside to setOf(null, IOBTag.Outside, IOBTag.Inside, IOBTag.Beginning),
+      IOBTag.Inside to setOf(IOBTag.Beginning, IOBTag.Inside),
+      null to setOf(IOBTag.Outside, IOBTag.Inside, IOBTag.Beginning))
 
     /**
      * @param curLabel the current label

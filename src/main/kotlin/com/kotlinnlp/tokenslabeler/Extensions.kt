@@ -8,7 +8,7 @@
 package com.kotlinnlp.tokenslabeler
 
 import com.kotlinnlp.linguisticdescription.sentence.properties.AnnotatedSegment
-import com.kotlinnlp.tokenslabeler.language.BIEOUTag
+import com.kotlinnlp.tokenslabeler.language.IOBTag
 import com.kotlinnlp.tokenslabeler.language.Label
 
 /**
@@ -22,11 +22,19 @@ fun List<Label>.toSegments(): List<AnnotatedSegment> {
   val ends = mutableListOf<Int>()
   val annotations = mutableListOf<String>()
 
-  this.forEachIndexed { tokenIndex, label ->
+  this.zipWithNext().forEachIndexed { tokenIndex, (curLabel, nextLabel) ->
+
     when {
-      label.type == BIEOUTag.Unit -> { starts.add(tokenIndex); ends.add(tokenIndex); annotations.add(label.value) }
-      label.type == BIEOUTag.Beginning -> { starts.add(tokenIndex); annotations.add(label.value) }
-      label.type == BIEOUTag.End -> ends.add(tokenIndex)
+
+      curLabel.type == IOBTag.Beginning -> {
+
+        starts.add(tokenIndex)
+        annotations.add(curLabel.value)
+
+        if (nextLabel.type == IOBTag.Outside) ends.add(tokenIndex)
+      }
+
+      curLabel.type == IOBTag.Inside && nextLabel.type == IOBTag.Outside -> ends.add(tokenIndex)
     }
   }
 

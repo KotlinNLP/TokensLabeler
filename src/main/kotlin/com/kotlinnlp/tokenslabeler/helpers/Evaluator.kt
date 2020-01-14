@@ -11,7 +11,7 @@ import com.kotlinnlp.simplednn.helpers.Evaluator
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
-import com.kotlinnlp.tokenslabeler.language.BIEOUTag
+import com.kotlinnlp.tokenslabeler.language.IOBTag
 import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.Label
 
@@ -40,7 +40,7 @@ class Evaluator(
    * The evaluation statistics.
    */
   override val stats = LabelsStatistics(
-    labels = this.model.outputLabels.getElements().filter { it.type != BIEOUTag.Outside }.map { it.value }.toSet())
+    labels = this.model.outputLabels.getElements().filter { it.type != IOBTag.Outside }.map { it.value }.toSet())
 
   /**
    * Evaluate the model with a single example.
@@ -70,15 +70,15 @@ class Evaluator(
 
     if (predictedLabel.value == goldLabel.value) {
 
-      if (goldLabel.type != BIEOUTag.Outside)
+      if (goldLabel.type != IOBTag.Outside)
         this.stats.metrics.getValue(goldLabel.value).truePos += 1
 
     } else {
 
-      if (goldLabel.type != BIEOUTag.Outside)
+      if (goldLabel.type != IOBTag.Outside)
         this.stats.metrics.getValue(goldLabel.value).falseNeg += 1
 
-      if (predictedLabel.type != BIEOUTag.Outside)
+      if (predictedLabel.type != IOBTag.Outside)
         this.stats.metrics.getValue(predictedLabel.value).falsePos += 1
     }
   }
