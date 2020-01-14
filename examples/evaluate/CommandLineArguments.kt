@@ -50,6 +50,15 @@ class CommandLineArguments(args: Array<String>) {
   ).default { null }
 
   /**
+   * The maximum number of sentences to load for the validation (default unlimited)
+   */
+  val maxSentences: Int? by parser.storing(
+    "-s",
+    "--max-sentences",
+    help="the maximum number of sentences to load for the validation (default unlimited)"
+  ) { toInt() }.default { null }
+
+  /**
    * Force parsing all arguments (only read ones are parsed by default).
    */
   init {

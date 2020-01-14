@@ -34,7 +34,7 @@ fun main(args: Array<String>) {
     type = "text",
     filePath = parsedArgs.validationSetPath,
     includes = parsedArgs.includes?.split(",")?.toSet(),
-    maxSentences = null
+    maxSentences = parsedArgs.maxSentences
   ).loadSentences()
 
   val evaluator = Evaluator(model = model, testSentences = testSentences)
