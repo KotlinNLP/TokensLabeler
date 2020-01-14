@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * ------------------------------------------------------------------*/
 
-package test
+package evaluate
 
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
@@ -19,22 +19,20 @@ import java.io.FileInputStream
 /**
  * Evaluate a [TokensLabelerModel] on a test set.
  *
- * Command line arguments:
- *   1. The model
- *   2. The file path of the test set
+ * Launch with the '-h' option for help about the command line arguments.
  */
 fun main(args: Array<String>) {
 
-  require(args.size == 2) {
-    "Required 2 arguments: <labeler_model_filename> <test_set_filename>"
+  val parsedArgs = CommandLineArguments(args)
+
+  val model = parsedArgs.modelPath.let {
+    println("Loading model from '$it'...")
+    TokensLabelerModel.load(FileInputStream(File(it)))
   }
 
-  println("Loading model from \"${args[0]}\"...")
-  val model = TokensLabelerModel.load(FileInputStream(File(args[0])))
-
   val testSentences: List<AnnotatedSentence> = DatasetReader(
-    type = "test",
-    filePath = args[1],
+    type = "text",
+    filePath = parsedArgs.validationSetPath,
     maxSentences = null
   ).loadSentences()
 
