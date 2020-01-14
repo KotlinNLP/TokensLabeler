@@ -35,7 +35,6 @@ fun main(args: Array<String>) {
   val testSentences: List<AnnotatedSentence> = DatasetReader(
     type = "test",
     filePath = args[1],
-    useOPlus = false,
     maxSentences = null
   ).loadSentences()
 

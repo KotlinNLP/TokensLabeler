@@ -18,14 +18,14 @@ import java.io.InputStreamReader
  *
  * @param type the string that describes the type of sentences
  * @param filePath the file path
- * @param useOPlus whether to convert labels to the "O Plus" annotation
+ * @param useOPlus whether to convert labels to the "O Plus" annotation (default false)
  * @param includes a set of labels to include in the dataset (others will be ignored), null to include all
  * @param maxSentences the max number of sentences to load
  */
 class DatasetReader(
   private val type: String,
   private val filePath: String,
-  private val useOPlus: Boolean,
+  private val useOPlus: Boolean = false,
   private val includes: Set<String>? = null,
   private val maxSentences: Int? = null
 ) {
