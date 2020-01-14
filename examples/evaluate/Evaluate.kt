@@ -46,6 +46,4 @@ fun main(args: Array<String>) {
 
   println()
   println(statistics)
-
-  println("\nACCURACY: %.2f %%".format(100.0 * statistics.accuracy))
 }
