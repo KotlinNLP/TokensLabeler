@@ -95,7 +95,7 @@ class DatasetReader(
 
     var end = -2
 
-    val tokens = forms.mapIndexed { i, it ->
+    val tokens: List<RealToken> = forms.mapIndexed { i, it ->
 
       val start = end + 2 // each couple of consecutive tokens is separated by a spacing char
       end = start + it.length - 1
