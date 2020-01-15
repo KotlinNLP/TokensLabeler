@@ -38,14 +38,14 @@ class DatasetReader(
    *
    * @return the list of loaded sentences
    */
-  fun loadSentences(): List<AnnotatedSentence> {
+  fun loadSentences(): List<RealSentence<AnnotatedToken>> {
 
     println("Loading ${this.type} sentences from '%s'%s...".format(
       this.filePath,
       this.maxSentences?.let { " (max $it)" } ?: ""
     ))
 
-    val sentences = mutableListOf<AnnotatedSentence>()
+    val sentences = mutableListOf<RealSentence<AnnotatedToken>>()
     val buffer = mutableListOf<String>()
 
     BufferedReader(InputStreamReader(FileInputStream(File(this.filePath)), Charsets.UTF_8)).lines().use { lines ->
@@ -73,7 +73,7 @@ class DatasetReader(
    *
    * @return the annotated sentence defined in the given lines
    */
-  private fun buildSentence(lines: List<String>): AnnotatedSentence {
+  private fun buildSentence(lines: List<String>): RealSentence<AnnotatedToken> {
 
     val (forms: List<String>, annotations: List<String>) = lines.map { line ->
       line.split("\t").let { Pair(it[0], it[1]) }

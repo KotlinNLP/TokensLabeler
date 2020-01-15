@@ -7,6 +7,7 @@
 
 package com.kotlinnlp.tokenslabeler.helpers
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.simplednn.core.functionalities.losses.SoftmaxCrossEntropyCalculator
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.UpdateMethod
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.adam.ADAMMethod
@@ -15,7 +16,8 @@ import com.kotlinnlp.simplednn.helpers.Trainer
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
-import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
+import com.kotlinnlp.tokenslabeler.language.AnnotatedToken
+import com.kotlinnlp.tokenslabeler.language.asRealTokens
 import com.kotlinnlp.utils.Shuffler
 import java.io.File
 import java.io.FileOutputStream
@@ -35,13 +37,13 @@ import java.io.FileOutputStream
 class Trainer(
   private val model: TokensLabelerModel,
   modelFilename: String,
-  dataset: List<AnnotatedSentence>,
+  dataset: List<RealSentence<AnnotatedToken>>,
   epochs: Int,
   updateMethod: UpdateMethod<*> = ADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
   evaluator: Evaluator,
   shuffler: Shuffler = Shuffler(),
   verbose: Boolean = true
-) : Trainer<AnnotatedSentence>(
+) : Trainer<RealSentence<AnnotatedToken>>(
   modelFilename = modelFilename,
   optimizers = listOf(ParamsOptimizer(updateMethod)),
   examples = dataset,
@@ -67,7 +69,7 @@ class Trainer(
    *
    * @param example an example to train the model with
    */
-  override fun learnFromExample(example: AnnotatedSentence) {
+  override fun learnFromExample(example: RealSentence<AnnotatedToken>) {
 
     val output: List<DenseNDArray> = this.annotator.forward(example.asRealTokens())
 

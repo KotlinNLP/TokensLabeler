@@ -44,13 +44,13 @@ fun main(args: Array<String>) = mainBody {
 
   val parsedArgs = CommandLineArguments(args)
 
-  val trainingSentences: List<AnnotatedSentence> = DatasetReader(
+  val trainingSentences: List<RealSentence<AnnotatedToken>> = DatasetReader(
     type = "training",
     filePath = parsedArgs.trainingSetPath,
     includes = parsedArgs.includes?.split(",")?.toSet(),
     maxSentences = parsedArgs.maxSentences).loadSentences()
 
-  val testSentences: List<AnnotatedSentence> = DatasetReader(
+  val testSentences: List<RealSentence<AnnotatedToken>> = DatasetReader(
     type = "test",
     filePath = parsedArgs.validationSetPath,
     includes = parsedArgs.includes?.split(",")?.toSet(),
@@ -102,7 +102,7 @@ fun main(args: Array<String>) = mainBody {
  */
 private fun buildTokensEncoderModel(
   parsedArgs: CommandLineArguments,
-  trainingSentences: List<AnnotatedSentence>
+  trainingSentences: List<RealSentence<AnnotatedToken>>
 ): TokensEncoderModel<RealToken, RealSentence<RealToken>> = EnsembleTokensEncoderModel(
   components = listOfNotNull(
     buildEmbeddingsEncoderComponent(parsedArgs),
@@ -132,7 +132,7 @@ private fun buildEmbeddingsEncoderComponent(parsedArgs: CommandLineArguments) =
  *
  * @return the encoder component that encodes with chars embeddings
  */
-private fun buildCharsEncoderComponent(trainingSentences: List<AnnotatedSentence>) =
+private fun buildCharsEncoderComponent(trainingSentences: List<RealSentence<AnnotatedToken>>) =
   EnsembleTokensEncoderModel.ComponentModel(
     model = TokensEncoderWrapperModel(
       model = CharsBiRNNEncoderModel(words = trainingSentences.flattenTokens().map { it.form }),

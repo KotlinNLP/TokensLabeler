@@ -15,8 +15,20 @@ import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
  *
  * @return a new sentence annotated with the given labels
  */
-fun RealSentence<RealToken>.annotate(labels: List<Label>) = AnnotatedSentence(
-  tokens = this.tokens.mapIndexed { tokenIndex, it ->
-    AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex]) },
-  position = this.position
-)
+fun RealSentence<RealToken>.annotate(labels: List<Label>) : RealSentence<AnnotatedToken> {
+
+  val self = this
+
+  return object : RealSentence<AnnotatedToken> {
+    override val tokens = self.tokens.mapIndexed { tokenIndex, it ->
+       AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex])
+    }
+    override val position = self.position
+  }
+}
+
+/**
+ * @return this sentence casted to a real sentence of real tokens
+ */
+@Suppress("UNCHECKED_CAST")
+fun RealSentence<AnnotatedToken>.asRealTokens() = this as RealSentence<RealToken>

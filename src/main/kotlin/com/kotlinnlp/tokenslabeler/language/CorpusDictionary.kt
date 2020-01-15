@@ -7,6 +7,7 @@
 
 package com.kotlinnlp.tokenslabeler.language
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.utils.DictionarySet
 import java.io.Serializable
 
@@ -30,7 +31,7 @@ class CorpusDictionary : Serializable {
      *
      * @return a new corpus dictionary
      */
-    operator fun invoke(sentences: List<AnnotatedSentence>): CorpusDictionary {
+    operator fun invoke(sentences: List<RealSentence<AnnotatedToken>>): CorpusDictionary {
 
       val dictionary = CorpusDictionary()
 

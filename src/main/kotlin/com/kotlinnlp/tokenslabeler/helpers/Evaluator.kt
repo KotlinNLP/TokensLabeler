@@ -7,12 +7,11 @@
 
 package com.kotlinnlp.tokenslabeler.helpers
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.simplednn.helpers.Evaluator
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
-import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
-import com.kotlinnlp.tokenslabeler.language.IOBTag
-import com.kotlinnlp.tokenslabeler.language.Label
+import com.kotlinnlp.tokenslabeler.language.*
 
 /**
  * The Validator.
@@ -23,9 +22,9 @@ import com.kotlinnlp.tokenslabeler.language.Label
  */
 class Evaluator(
   private val model: TokensLabelerModel,
-  testSentences: List<AnnotatedSentence>,
+  testSentences: List<RealSentence<AnnotatedToken>>,
   verbose: Boolean = true
-) : Evaluator<AnnotatedSentence, LabelsStatistics>(
+) : Evaluator<RealSentence<AnnotatedToken>, LabelsStatistics>(
   examples = testSentences,
   verbose = verbose
 ) {
@@ -46,7 +45,7 @@ class Evaluator(
    *
    * @param example the example to validate the model with
    */
-  override fun evaluate(example: AnnotatedSentence) {
+  override fun evaluate(example: RealSentence<AnnotatedToken>) {
 
     example.tokens
       .asSequence()

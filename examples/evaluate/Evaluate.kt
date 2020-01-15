@@ -7,6 +7,7 @@
 
 package evaluate
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.helpers.DatasetReader
 import com.kotlinnlp.tokenslabeler.helpers.Evaluator
@@ -30,7 +31,7 @@ fun main(args: Array<String>) {
     TokensLabelerModel.load(FileInputStream(File(it)))
   }
 
-  val testSentences: List<AnnotatedSentence> = DatasetReader(
+  val testSentences: List<RealSentence<AnnotatedToken>> = DatasetReader(
     type = "text",
     filePath = parsedArgs.validationSetPath,
     includes = parsedArgs.includes?.split(",")?.toSet(),
