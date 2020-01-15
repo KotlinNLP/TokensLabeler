@@ -16,7 +16,6 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
-import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.utils.Shuffler
 import java.io.File
 import java.io.FileOutputStream
@@ -70,7 +69,7 @@ class Trainer(
    */
   override fun learnFromExample(example: AnnotatedSentence) {
 
-    val output: List<DenseNDArray> = this.annotator.forward(BaseSentence(example))
+    val output: List<DenseNDArray> = this.annotator.forward(example.asRealTokens())
 
     val errors: List<DenseNDArray> = output.zip(example.tokens).map { (distribution, token) ->
 

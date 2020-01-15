@@ -8,6 +8,8 @@
 package com.kotlinnlp.tokenslabeler
 
 import com.kotlinnlp.linguisticdescription.language.Language
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.simplednn.core.functionalities.activations.ActivationFunction
 import com.kotlinnlp.simplednn.core.functionalities.activations.Softmax
 import com.kotlinnlp.simplednn.core.functionalities.initializers.GlorotInitializer
@@ -17,8 +19,6 @@ import com.kotlinnlp.simplednn.core.layers.models.merge.mergeconfig.ConcatFeedfo
 import com.kotlinnlp.simplednn.deeplearning.birnn.BiRNN
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNN
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
-import com.kotlinnlp.tokenslabeler.language.BaseSentence
-import com.kotlinnlp.tokenslabeler.language.BaseToken
 import com.kotlinnlp.tokenslabeler.language.Label
 import com.kotlinnlp.utils.DictionarySet
 import com.kotlinnlp.utils.Serializer
@@ -43,7 +43,7 @@ import java.io.Serializable
  */
 class TokensLabelerModel(
   val language: Language,
-  val tokensEncoderModel: TokensEncoderModel<BaseToken, BaseSentence>,
+  val tokensEncoderModel: TokensEncoderModel<RealToken, RealSentence<RealToken>>,
   biRNNConnectionType: LayerType.Connection,
   biRNNActivation: ActivationFunction?,
   biRNNHiddenSize: Int,

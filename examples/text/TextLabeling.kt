@@ -46,12 +46,12 @@ fun main(args: Array<String>) {
     if (inputText.isEmpty()) break
     else {
 
-      tokenizer.tokenize(inputText).forEach { s ->
+      tokenizer.tokenize(inputText).forEach { sentence ->
 
         @Suppress("UNCHECKED_CAST")
-        val sentence = BaseSentence(s as RealSentence<RealToken>)
+        sentence as RealSentence<RealToken>
 
-        println(sentence.toAnnotatedSentence(labeler.predict(sentence)).toString() + "\n")
+        println(sentence.annotate(labeler.predict(sentence)).toString() + "\n")
       }
     }
   }

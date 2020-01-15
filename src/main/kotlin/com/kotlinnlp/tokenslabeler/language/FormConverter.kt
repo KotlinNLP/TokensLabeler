@@ -7,14 +7,16 @@
 
 package com.kotlinnlp.tokenslabeler.language
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.Sentence
 import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.tokensencoder.wrapper.SentenceConverter
 
 /**
- * The sentence converter from a [BaseToken] to a Sentence of FormToken.
+ * The sentence converter from a [RealSentence] of [RealToken] to a [Sentence] of [FormToken].
  */
-class FormConverter : SentenceConverter<BaseToken, BaseSentence, FormToken, Sentence<FormToken>> {
+class FormConverter : SentenceConverter<RealToken, RealSentence<RealToken>, FormToken, Sentence<FormToken>> {
 
   companion object {
 
@@ -26,12 +28,12 @@ class FormConverter : SentenceConverter<BaseToken, BaseSentence, FormToken, Sent
   }
 
   /**
-   * Convert a given [BaseSentence] to a Sentence of FormToken, simply casting it.
+   * Convert a given [RealSentence] of [RealToken] to a [Sentence] of [FormToken], simply casting it.
    *
    * @param sentence the input sentence
    *
    * @return the converted sentence
    */
   @Suppress("UNCHECKED_CAST")
-  override fun convert(sentence: BaseSentence): Sentence<FormToken> = sentence as Sentence<FormToken>
+  override fun convert(sentence: RealSentence<RealToken>): Sentence<FormToken> = sentence as Sentence<FormToken>
 }

@@ -7,6 +7,8 @@
 
 package com.kotlinnlp.tokenslabeler
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
@@ -14,7 +16,6 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
 import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import com.kotlinnlp.tokenslabeler.language.IOBTag
-import com.kotlinnlp.tokenslabeler.language.BaseSentence
 
 /**
  * The Tokens Labeler.
@@ -28,7 +29,7 @@ class TokensLabeler(
   override val id: Int = 0,
   override val useDropout: Boolean = false
 ) : NeuralProcessor<
-  BaseSentence, // InputType
+  RealSentence<RealToken>, // InputType
   List<DenseNDArray>, // OutputType
   List<DenseNDArray>, // ErrorsType
   NeuralProcessor.NoInputErrors // InputErrorsType
@@ -57,7 +58,7 @@ class TokensLabeler(
    *
    * @return a list of scored labels, one for each token of the sentence
    */
-  fun predict(input: BaseSentence): List<ScoredLabel> {
+  fun predict(input: RealSentence<RealToken>): List<ScoredLabel> {
 
     val output: List<DenseNDArray> = this.forward(input)
 
@@ -84,7 +85,7 @@ class TokensLabeler(
    *
    * @return the result of the forward
    */
-  override fun forward(input: BaseSentence): List<DenseNDArray> =
+  override fun forward(input: RealSentence<RealToken>): List<DenseNDArray> =
     this.biRNNProcessor.forward(this.tokensEncoder.forward(input))
 
   /**

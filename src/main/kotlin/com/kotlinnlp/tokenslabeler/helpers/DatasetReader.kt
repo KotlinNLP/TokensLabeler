@@ -7,6 +7,9 @@
 
 package com.kotlinnlp.tokenslabeler.helpers
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
+import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 import com.kotlinnlp.tokenslabeler.language.*
 import java.io.BufferedReader
 import java.io.File
@@ -66,7 +69,9 @@ class DatasetReader(
   }
 
   /**
+   * @param lines the lines of the dataset file that define a sentence
    *
+   * @return the annotated sentence defined in the given lines
    */
   private fun buildSentence(lines: List<String>): AnnotatedSentence {
 
@@ -78,7 +83,36 @@ class DatasetReader(
       if (this.useOPlus) setOPlus(it)
     }
 
-    return BaseSentence(forms).toAnnotatedSentence(labels)
+    return this.buildRealSentence(forms).annotate(labels)
+  }
+
+  /**
+   * @param forms list of tokens forms
+   *
+   * @return a new real sentence of real tokens with the given forms
+   */
+  private fun buildRealSentence(forms: List<String>): RealSentence<RealToken> {
+
+    var end = -2
+
+    val tokens = forms.mapIndexed { i, it ->
+
+      val start = end + 2 // each couple of consecutive tokens is separated by a spacing char
+      end = start + it.length - 1
+
+      object : RealToken {
+        override val form = it
+        override val position = Position(index = i, start = start, end = end)
+      }
+    }
+
+    return object : RealSentence<RealToken> {
+      override val tokens = tokens
+      override val position = Position(
+        index = 0,
+        start = tokens.first().position.start,
+        end = tokens.last().position.end)
+    }
   }
 
   /**

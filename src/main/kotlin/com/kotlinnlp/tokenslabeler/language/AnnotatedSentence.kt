@@ -8,6 +8,7 @@
 package com.kotlinnlp.tokenslabeler.language
 
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
 /**
@@ -24,4 +25,10 @@ data class AnnotatedSentence(
    * @return the string representation of this sentence
    */
   override fun toString(): String = this.tokens.joinToString("\n")
+
+  /**
+   * @return this sentence casted to a real sentence of real tokens
+   */
+  @Suppress("UNCHECKED_CAST")
+  fun asRealTokens(): RealSentence<RealToken> = this as RealSentence<RealToken>
 }

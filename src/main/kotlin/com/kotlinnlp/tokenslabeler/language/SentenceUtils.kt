@@ -7,17 +7,16 @@
 
 package com.kotlinnlp.tokenslabeler.language
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
-import com.kotlinnlp.linguisticdescription.sentence.token.properties.Position
 
 /**
- * A base token.
+ * @param labels a list of labels, one for each token
  *
- * @property form the form of the token
- * @property position the position of the token in the original text
+ * @return a new sentence annotated with the given labels
  */
-class BaseToken(
-  override val form: String,
-  override val position: Position
-) : RealToken
-
+fun RealSentence<RealToken>.annotate(labels: List<Label>) = AnnotatedSentence(
+  tokens = this.tokens.mapIndexed { tokenIndex, it ->
+    AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex]) },
+  position = this.position
+)

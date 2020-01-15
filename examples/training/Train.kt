@@ -8,7 +8,9 @@
 package training
 
 import com.kotlinnlp.linguisticdescription.language.getLanguageByIso
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.flattenTokens
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.morphologicalanalyzer.dictionary.MorphologyDictionary
 import com.kotlinnlp.simplednn.core.embeddings.EmbeddingsMap
 import com.kotlinnlp.simplednn.core.functionalities.activations.Tanh
@@ -101,7 +103,7 @@ fun main(args: Array<String>) = mainBody {
 private fun buildTokensEncoderModel(
   parsedArgs: CommandLineArguments,
   trainingSentences: List<AnnotatedSentence>
-): TokensEncoderModel<BaseToken, BaseSentence> = EnsembleTokensEncoderModel(
+): TokensEncoderModel<RealToken, RealSentence<RealToken>> = EnsembleTokensEncoderModel(
   components = listOfNotNull(
     buildEmbeddingsEncoderComponent(parsedArgs),
     buildCharsEncoderComponent(trainingSentences),

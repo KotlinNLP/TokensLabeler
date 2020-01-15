@@ -7,6 +7,8 @@
 
 package com.kotlinnlp.tokenslabeler.gazetteers
 
+import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.morphologicalanalyzer.dictionary.MorphologyDictionary
 import com.kotlinnlp.simplednn.core.functionalities.activations.ActivationFunction
 import com.kotlinnlp.simplednn.core.functionalities.initializers.GlorotInitializer
@@ -15,8 +17,6 @@ import com.kotlinnlp.simplednn.core.layers.LayerInterface
 import com.kotlinnlp.simplednn.core.layers.LayerType
 import com.kotlinnlp.simplednn.core.layers.StackedLayersParameters
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
-import com.kotlinnlp.tokenslabeler.language.BaseSentence
-import com.kotlinnlp.tokenslabeler.language.BaseToken
 
 /**
  * @property tokenEncodingSize the size of the token encoding vectors.
@@ -31,7 +31,7 @@ class GazetteersEncoderModel(
   weightsInitializer: Initializer? = GlorotInitializer(),
   biasesInitializer: Initializer? = null,
   internal val gazetteers: MorphologyDictionary
-) : TokensEncoderModel<BaseToken, BaseSentence> {
+) : TokensEncoderModel<RealToken, RealSentence<RealToken>> {
 
   companion object {
 

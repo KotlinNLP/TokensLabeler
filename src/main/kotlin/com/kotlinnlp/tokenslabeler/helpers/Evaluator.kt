@@ -12,7 +12,6 @@ import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.AnnotatedSentence
 import com.kotlinnlp.tokenslabeler.language.IOBTag
-import com.kotlinnlp.tokenslabeler.language.BaseSentence
 import com.kotlinnlp.tokenslabeler.language.Label
 
 /**
@@ -52,7 +51,7 @@ class Evaluator(
     example.tokens
       .asSequence()
       .map { token -> token.label }
-      .zip(this.labeler.predict(BaseSentence(example)).asSequence())
+      .zip(this.labeler.predict(example.asRealTokens()).asSequence())
       .forEach { (goldLabel, predictedLabel) ->
         this.evaluatePrediction(predictedLabel = predictedLabel, goldLabel = goldLabel)
       }

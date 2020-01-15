@@ -21,8 +21,6 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.simplednn.simplemath.ndarray.sparsebinary.SparseBinaryNDArray
 import com.kotlinnlp.simplednn.simplemath.ndarray.sparsebinary.SparseBinaryNDArrayFactory
 import com.kotlinnlp.tokensencoder.TokensEncoder
-import com.kotlinnlp.tokenslabeler.language.BaseSentence
-import com.kotlinnlp.tokenslabeler.language.BaseToken
 import java.lang.RuntimeException
 
 /**
@@ -36,7 +34,7 @@ class GazetteersEncoder(
   override val model: GazetteersEncoderModel,
   override val useDropout: Boolean,
   override val id: Int = 0
-) : TokensEncoder<BaseToken, BaseSentence>() {
+) : TokensEncoder<RealToken, RealSentence<RealToken>>() {
 
   /**
    * The position of a token within an entity.
@@ -147,10 +145,9 @@ class GazetteersEncoder(
    *
    * @return a list of dense encoded representations of the given sentence tokens
    */
-  override fun forward(input: BaseSentence): List<DenseNDArray> {
+  override fun forward(input: RealSentence<RealToken>): List<DenseNDArray> {
 
-    @Suppress("UNCHECKED_CAST")
-    val analysis = this.analyzer.analyze(input as RealSentence<RealToken>)
+    val analysis = this.analyzer.analyze(input)
 
     val entitiesFeatures: List<SparseBinaryNDArray> =
       this.convertToBinaryFeatures(entities = this.getEntities(analysis), sentenceSize = input.tokens.size)
