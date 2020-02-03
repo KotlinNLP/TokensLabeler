@@ -1,4 +1,4 @@
-# SequenceLabeler
+# TokensLabeler [![Maven Central](https://img.shields.io/maven-central/v/com.kotlinnlp/tokenslabeler.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.kotlinnlp%22%20AND%20a:%22tokenslabeler%22) [![Build Status](https://travis-ci.org/KotlinNLP/TokensLabeler.svg?branch=master)](https://travis-ci.org/KotlinNLP/TokensLabeler)
 
 TokensLabeler allows to annotate the tokens of a sentence according to the BIEOU notation (or a subset of), in which the set of labels is defined in the training set.
         
