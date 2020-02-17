@@ -72,6 +72,8 @@ fun main(args: Array<String>) = mainBody {
     labelerDropout = 0.0,
     outputLabels = dictionary.labels)
 
+  println("\n-- START TRAINING ON %d EXAMPLES".format(trainingSentences.size))
+
   Trainer(
     model = model,
     modelFilename = parsedArgs.modelPath,
@@ -82,7 +84,7 @@ fun main(args: Array<String>) = mainBody {
     verbose = true
   ).train()
 
-  println("\nFINAL VALIDATION")
+  println("\n-- START FINAL VALIDATION ON %d EXAMPLES".format(testSentences.size))
 
   // Load the best model.
   val validationModel = TokensLabelerModel.load(FileInputStream(File(parsedArgs.modelPath)))
