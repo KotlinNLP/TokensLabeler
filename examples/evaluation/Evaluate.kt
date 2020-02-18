@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * ------------------------------------------------------------------*/
 
-package evaluate
+package evaluation
 
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
