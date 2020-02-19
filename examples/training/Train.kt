@@ -84,6 +84,7 @@ fun main(args: Array<String>) = mainBody {
       model = model,
       testSentences = testSentences,
       ignoreMissingLabels = parsedArgs.ignoreMissingLabels),
+    useDropout = true,
     verbose = true
   ).train()
 

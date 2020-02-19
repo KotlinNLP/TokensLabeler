@@ -22,7 +22,7 @@ import com.kotlinnlp.tokenslabeler.language.IOBTag
  *
  * @param model the model
  * @property id the id used for the pool (default 0)
- * @property useDropout whether to use the dropout or not
+ * @property useDropout whether to use the dropout or not (default false)
  */
 class TokensLabeler(
   private val model: TokensLabelerModel,

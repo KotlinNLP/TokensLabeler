@@ -32,6 +32,7 @@ import java.io.FileOutputStream
  * @param updateMethod the update method to optimize the model parameters
  * @param evaluator the helper for the evaluation
  * @param shuffler used to shuffle the examples before each epoch (with pseudo random by default)
+ * @param useDropout whether to use the dropout or not  (default = false)
  * @param verbose whether to print info about the training progress and timing (default = true)
  */
 class Trainer(
@@ -42,6 +43,7 @@ class Trainer(
   updateMethod: UpdateMethod<*> = ADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
   evaluator: Evaluator,
   shuffler: Shuffler = Shuffler(),
+  useDropout: Boolean = false,
   verbose: Boolean = true
 ) : Trainer<RealSentence<AnnotatedToken>>(
   modelFilename = modelFilename,
@@ -57,7 +59,7 @@ class Trainer(
   /**
    * A frame extractor built with the given [model].
    */
-  private val annotator = TokensLabeler(this.model)
+  private val annotator = TokensLabeler(model = this.model, useDropout = useDropout)
 
   /**
    * The optimizer of the [model] parameters.
