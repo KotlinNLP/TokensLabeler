@@ -112,6 +112,14 @@ class CommandLineArguments(args: Array<String>) {
   ).default { null }
 
   /**
+   * Whether to ignore labels of the validation dataset that are missing in the model.
+   */
+  val ignoreMissingLabels: Boolean by parser.flagging(
+    "--ignore-missing-labels",
+    help = "whether to ignore labels of the validation dataset that are missing in the model"
+  )
+
+  /**
    * Force parsing all arguments (only read ones are parsed by default).
    */
   init {

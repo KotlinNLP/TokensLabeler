@@ -38,9 +38,10 @@ fun main(args: Array<String>) {
     maxSentences = parsedArgs.maxSentences
   ).loadSentences()
 
-  val evaluator = Evaluator(model = model, testSentences = testSentences)
-  val timer = Timer()
+  val evaluator =
+    Evaluator(model = model, testSentences = testSentences, ignoreMissingLabels = parsedArgs.ignoreMissingLabels)
 
+  val timer = Timer()
   println("\nEvaluating the model on ${testSentences.size} test sentences...")
   val statistics: LabelsStatistics = evaluator.evaluate()
   println("Elapsed time: ${timer.formatElapsedTime()}")

@@ -14,15 +14,17 @@ import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.*
 
 /**
- * The Validator.
+ * The evaluator of a [TokensLabelerModel].
  *
  * @param model the model of a TokensLabeler
  * @param testSentences the list of sentences annotated with gold tags
+ * @param ignoreMissingLabels whether to ignore labels of the test set that are missing in the model (default = false)
  * @param verbose whether to print info about the validation progress (default = true)
  */
 class Evaluator(
   private val model: TokensLabelerModel,
   testSentences: List<RealSentence<AnnotatedToken>>,
+  private val ignoreMissingLabels: Boolean = false,
   verbose: Boolean = true
 ) : Evaluator<RealSentence<AnnotatedToken>, LabelsStatistics>(
   examples = testSentences,
@@ -66,18 +68,21 @@ class Evaluator(
    */
   private fun evaluatePrediction(predictedLabel: Label, goldLabel: Label) {
 
-    if (predictedLabel.value == goldLabel.value) {
+    if (!this.ignoreMissingLabels || goldLabel.value in this.stats.metrics) {
 
-      if (goldLabel.type != IOBTag.Outside)
-        this.stats.metrics.getValue(goldLabel.value).truePos += 1
+      if (predictedLabel.value == goldLabel.value) {
 
-    } else {
+        if (goldLabel.type != IOBTag.Outside)
+          this.stats.metrics.getValue(goldLabel.value).truePos += 1
 
-      if (goldLabel.type != IOBTag.Outside)
-        this.stats.metrics.getValue(goldLabel.value).falseNeg += 1
+      } else {
 
-      if (predictedLabel.type != IOBTag.Outside)
-        this.stats.metrics.getValue(predictedLabel.value).falsePos += 1
+        if (goldLabel.type != IOBTag.Outside)
+          this.stats.metrics.getValue(goldLabel.value).falseNeg += 1
+
+        if (predictedLabel.type != IOBTag.Outside)
+          this.stats.metrics.getValue(predictedLabel.value).falsePos += 1
+      }
     }
   }
 }

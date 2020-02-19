@@ -80,7 +80,10 @@ fun main(args: Array<String>) = mainBody {
     dataset = trainingSentences,
     epochs = parsedArgs.epochs,
     updateMethod = ADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
-    evaluator = Evaluator(model = model, testSentences = testSentences),
+    evaluator = Evaluator(
+      model = model,
+      testSentences = testSentences,
+      ignoreMissingLabels = parsedArgs.ignoreMissingLabels),
     verbose = true
   ).train()
 
