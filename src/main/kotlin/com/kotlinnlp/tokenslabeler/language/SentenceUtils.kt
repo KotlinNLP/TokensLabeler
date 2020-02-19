@@ -20,10 +20,23 @@ fun RealSentence<RealToken>.annotate(labels: List<Label>) : RealSentence<Annotat
   val self = this
 
   return object : RealSentence<AnnotatedToken> {
+
+    /**
+     * The list of tokens of this sentence.
+     */
     override val tokens = self.tokens.mapIndexed { tokenIndex, it ->
-       AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex])
+      AnnotatedToken(form = it.form, position = it.position, label = labels[tokenIndex])
     }
+
+    /**
+     * The position of the sentence in the text.
+     */
     override val position = self.position
+
+    /**
+     * @return the string representation of this sentence
+     */
+    override fun toString(): String = this.tokens.joinToString("\n")
   }
 }
 
