@@ -34,17 +34,20 @@ fun main(args: Array<String>) {
     println("Loading tokenizer model from '$it'...")
     NeuralTokenizer(NeuralTokenizerModel.load(FileInputStream(File(it))))
   }
-
-  println("Loading model \"${args[1]}\"...")
-
-  val labeler = TokensLabeler(TokensLabelerModel.load(FileInputStream(File(args[1]))))
+  val labeler: TokensLabeler = args[1].let {
+    println("Loading labeler model from '$it'...")
+    TokensLabeler(TokensLabelerModel.load(FileInputStream(File(it))))
+  }
 
   while (true) {
 
     val inputText = readValue()
 
-    if (inputText.isEmpty()) break
-    else {
+    if (inputText.isEmpty()) {
+
+      break
+
+    } else {
 
       tokenizer.tokenize(inputText).forEach { sentence ->
 
