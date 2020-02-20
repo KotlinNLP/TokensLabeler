@@ -92,7 +92,11 @@ fun main(args: Array<String>) = mainBody {
 
   // Load the best model.
   val validationModel = TokensLabelerModel.load(FileInputStream(File(parsedArgs.modelPath)))
-  val bestStats: LabelsStatistics = Evaluator(model = validationModel, testSentences = testSentences).evaluate()
+  val bestStats: LabelsStatistics = Evaluator(
+    model = validationModel,
+    testSentences = testSentences,
+    ignoreMissingLabels = parsedArgs.ignoreMissingLabels
+  ).evaluate()
 
   println("\nBest statistics:")
   println(bestStats)
