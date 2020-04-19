@@ -79,7 +79,7 @@ class Trainer(
 
       val goldIndex: Int = this.model.outputLabels.getId(token.label)!!
 
-      SoftmaxCrossEntropyCalculator().calculateErrors(output = distribution, goldIndex = goldIndex)
+      SoftmaxCrossEntropyCalculator.calculateErrors(output = distribution, goldIndex = goldIndex)
     }
 
     this.annotator.backward(errors)
