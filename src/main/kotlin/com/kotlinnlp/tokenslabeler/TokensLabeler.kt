@@ -20,12 +20,12 @@ import com.kotlinnlp.tokenslabeler.language.IOBTag
 /**
  * The Tokens Labeler.
  *
- * @param model the model
+ * @property model the model
  * @property id the id used for the pool (default 0)
  * @property useDropout whether to use the dropout or not (default false)
  */
 class TokensLabeler(
-  private val model: TokensLabelerModel,
+  val model: TokensLabelerModel,
   override val id: Int = 0,
   override val useDropout: Boolean = false
 ) : NeuralProcessor<
