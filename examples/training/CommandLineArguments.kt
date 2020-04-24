@@ -23,15 +23,6 @@ class CommandLineArguments(args: Array<String>) {
   private val parser = ArgParser(args)
 
   /**
-   * The language code
-   */
-  val langCode: String by parser.storing(
-    "-l",
-    "--language",
-    help="the language ISO 639-1 code"
-  )
-
-  /**
    * The number of training epochs (default = 30).
    */
   val epochs: Int by parser.storing(
@@ -65,6 +56,15 @@ class CommandLineArguments(args: Array<String>) {
     "-v",
     "--validation-set",
     help="the file path of the validation set"
+  )
+
+  /**
+   * The name of the model.
+   */
+  val modelName: String by parser.storing(
+    "-n",
+    "--model-name",
+    help="the name of the model"
   )
 
   /**

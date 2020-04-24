@@ -7,7 +7,6 @@
 
 package training
 
-import com.kotlinnlp.linguisticdescription.language.getLanguageByIso
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.flattenTokens
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
@@ -62,7 +61,7 @@ fun main(args: Array<String>) = mainBody {
   }
 
   val model = TokensLabelerModel(
-    language = getLanguageByIso(parsedArgs.langCode),
+    name = parsedArgs.modelName,
     tokensEncoderModel = buildTokensEncoderModel(parsedArgs = parsedArgs, trainingSentences = trainingSentences),
     biRNNConnectionType = LayerType.Connection.LSTM,
     biRNNActivation = Tanh(),

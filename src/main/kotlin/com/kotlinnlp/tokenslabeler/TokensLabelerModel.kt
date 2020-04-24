@@ -7,7 +7,6 @@
 
 package com.kotlinnlp.tokenslabeler
 
-import com.kotlinnlp.linguisticdescription.language.Language
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.simplednn.core.functionalities.activations.ActivationFunction
@@ -29,7 +28,7 @@ import java.io.Serializable
 /**
  * The serializable model of a [TokensLabeler].
  *
- * @property language the language within the system works
+ * @property name the model name
  * @property tokensEncoderModel the tokens encoder model
  * @param biRNNConnectionType type of recurrent neural network (e.g. LSTM, GRU, CFN, SimpleRNN)
  * @param biRNNActivation the activation function of the hidden layer
@@ -42,7 +41,7 @@ import java.io.Serializable
  * @param biasesInitializer the initializer of the biases (zeros if null, default: null)
  */
 class TokensLabelerModel(
-  val language: Language,
+  val name: String,
   val tokensEncoderModel: TokensEncoderModel<RealToken, RealSentence<RealToken>>,
   biRNNConnectionType: LayerType.Connection,
   biRNNActivation: ActivationFunction?,
