@@ -94,7 +94,7 @@ class TokensLabeler(
     propagateToInput = true)
 
   /**
-   * @param input the sentence
+   * @param input the input sentence
    *
    * @return a list of scored labels, one for each token of the sentence
    */
@@ -117,6 +117,14 @@ class TokensLabeler(
       ?.toList()
       ?: greedyDecode(output)
   }
+
+  /**
+   * @param input the input sentence
+   *
+   * @return the annotated segments found, related to actual tags ([IOBTag.Outside] annotations ignored)
+   */
+  fun predictAsSegments(input: RealSentence<RealToken>): List<AnnotatedSegment> =
+    buildSegments(tokens = input.tokens, labels = this.predict(input))
 
   /**
    * The Forward.
