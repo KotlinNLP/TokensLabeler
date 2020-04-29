@@ -5,13 +5,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  * ------------------------------------------------------------------*/
 
-package com.kotlinnlp.tokenslabeler
+package com.kotlinnlp.tokenslabeler.language
 
 import com.kotlinnlp.linguisticdescription.sentence.properties.AnnotatedSegment
-import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
-import com.kotlinnlp.tokenslabeler.language.IOBTag
-import com.kotlinnlp.tokenslabeler.language.Label
-import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import kotlin.properties.Delegates
 
 /**
@@ -22,7 +18,7 @@ import kotlin.properties.Delegates
  * @property annotation the segment annotation
  * @param scoreInit the initial score of the segment
  */
-private class Segment(val startToken: Int, val startChar: Int, val annotation: String, scoreInit: Double) {
+internal class Segment(val startToken: Int, val startChar: Int, val annotation: String, scoreInit: Double) {
 
   /**
    * The index of the last token of the segment.
@@ -66,38 +62,4 @@ private class Segment(val startToken: Int, val startChar: Int, val annotation: S
     endChar = this.endChar,
     annotation = this.annotation,
     score = this.scoreAcc / this.scoreCount)
-}
-
-/**
- * Transform a list of [Label]s into a list of [AnnotatedSegment]s.
- *
- * @param tokens the tokens with which the labels are associated
- *
- * @return a list of annotated segments
- */
-fun List<ScoredLabel>.toSegments(tokens: List<RealToken>): List<AnnotatedSegment> {
-
-  val segments: MutableList<Segment> = mutableListOf()
-
-  (this + listOf(null)).zipWithNext().forEachIndexed { tokenIndex, (curLabel, nextLabel) ->
-
-    curLabel!!
-
-    if (curLabel.type == IOBTag.Beginning)
-      segments.add(Segment(
-        startToken = tokenIndex,
-        startChar = tokens[tokenIndex].position.start,
-        annotation = curLabel.value,
-        scoreInit = curLabel.score))
-
-    if (curLabel.type == IOBTag.Inside)
-      segments.last().addScore(curLabel.score)
-
-    if (curLabel.type != IOBTag.Outside && (nextLabel == null || nextLabel.type != IOBTag.Inside)) {
-      segments.last().endToken = tokenIndex
-      segments.last().endChar = tokens[tokenIndex].position.end
-    }
-  }
-
-  return segments.map { it.toAnnotatedSegment() }
 }

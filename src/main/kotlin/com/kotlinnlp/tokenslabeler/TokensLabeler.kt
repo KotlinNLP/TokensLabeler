@@ -8,6 +8,7 @@
 package com.kotlinnlp.tokenslabeler
 
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
+import com.kotlinnlp.linguisticdescription.sentence.properties.AnnotatedSegment
 import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
@@ -16,6 +17,7 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
 import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import com.kotlinnlp.tokenslabeler.language.IOBTag
+import com.kotlinnlp.tokenslabeler.language.Segment
 
 /**
  * The Tokens Labeler.
@@ -34,6 +36,44 @@ class TokensLabeler(
   List<DenseNDArray>, // ErrorsType
   NeuralProcessor.NoInputErrors // InputErrorsType
   > {
+
+  companion object {
+
+    /**
+     * Build annotated segments merging the labels corresponding to actual tags.
+     *
+     * @param labels the labels of a prediction
+     * @param tokens the parallel list of tokens with which the labels are associated
+     *
+     * @return a list of annotated segments
+     */
+    fun buildSegments(tokens: List<RealToken>, labels: List<ScoredLabel>): List<AnnotatedSegment> {
+
+      val segments: MutableList<Segment> = mutableListOf()
+
+      (labels + listOf(null)).zipWithNext().forEachIndexed { tokenIndex, (curLabel, nextLabel) ->
+
+        curLabel!!
+
+        if (curLabel.type == IOBTag.Beginning)
+          segments.add(Segment(
+            startToken = tokenIndex,
+            startChar = tokens[tokenIndex].position.start,
+            annotation = curLabel.value,
+            scoreInit = curLabel.score))
+
+        if (curLabel.type == IOBTag.Inside)
+          segments.last().addScore(curLabel.score)
+
+        if (curLabel.type != IOBTag.Outside && (nextLabel == null || nextLabel.type != IOBTag.Inside)) {
+          segments.last().endToken = tokenIndex
+          segments.last().endChar = tokens[tokenIndex].position.end
+        }
+      }
+
+      return segments.map { it.toAnnotatedSegment() }
+    }
+  }
 
   /**
    * Not used because the input is a sentence.
