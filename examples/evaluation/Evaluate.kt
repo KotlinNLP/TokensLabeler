@@ -14,6 +14,7 @@ import com.kotlinnlp.tokenslabeler.helpers.Evaluator
 import com.kotlinnlp.tokenslabeler.helpers.LabelsStatistics
 import com.kotlinnlp.tokenslabeler.language.*
 import com.kotlinnlp.utils.Timer
+import com.xenomachina.argparser.mainBody
 import java.io.File
 import java.io.FileInputStream
 
@@ -22,7 +23,7 @@ import java.io.FileInputStream
  *
  * Launch with the '-h' option for help about the command line arguments.
  */
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = mainBody {
 
   val parsedArgs = CommandLineArguments(args)
 
