@@ -64,7 +64,7 @@ fun main(args: Array<String>) = mainBody {
     name = parsedArgs.modelName,
     tokensEncoderModel = buildTokensEncoderModel(parsedArgs = parsedArgs, trainingSentences = trainingSentences),
     biRNNConnectionType = LayerType.Connection.LSTM,
-    biRNNActivation = Tanh(),
+    biRNNActivation = Tanh,
     biRNNHiddenSize = 200,
     numOfBiRNNLayers = TokensLabelerModel.BiRNNLayersNumber.Single,
     inputDropout = 0.25,
@@ -158,6 +158,6 @@ private fun buildGazetteersEncoderModel(parsedArgs: CommandLineArguments) = pars
   val gazetteers = MorphologyDictionary.load(FileInputStream(File(it)))
 
   EnsembleTokensEncoderModel.ComponentModel(
-    model = GazetteersEncoderModel(tokenEncodingSize = 50, activation = Tanh(), gazetteers = gazetteers),
+    model = GazetteersEncoderModel(tokenEncodingSize = 50, activation = Tanh, gazetteers = gazetteers),
     trainable = true)
 }
