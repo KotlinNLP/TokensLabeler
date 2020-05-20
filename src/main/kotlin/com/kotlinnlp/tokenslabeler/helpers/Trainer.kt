@@ -10,7 +10,7 @@ package com.kotlinnlp.tokenslabeler.helpers
 import com.kotlinnlp.linguisticdescription.sentence.RealSentence
 import com.kotlinnlp.simplednn.core.functionalities.losses.SoftmaxCrossEntropyCalculator
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.UpdateMethod
-import com.kotlinnlp.simplednn.core.functionalities.updatemethods.adam.ADAMMethod
+import com.kotlinnlp.simplednn.core.functionalities.updatemethods.radam.RADAMMethod
 import com.kotlinnlp.simplednn.core.optimizer.ParamsOptimizer
 import com.kotlinnlp.simplednn.helpers.Trainer
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
@@ -40,7 +40,7 @@ class Trainer(
   modelFilename: String,
   dataset: List<RealSentence<AnnotatedToken>>,
   epochs: Int,
-  updateMethod: UpdateMethod<*> = ADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
+  updateMethod: UpdateMethod<*> = RADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
   evaluator: Evaluator,
   shuffler: Shuffler = Shuffler(),
   useDropout: Boolean = false,

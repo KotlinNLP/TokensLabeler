@@ -13,7 +13,7 @@ import com.kotlinnlp.linguisticdescription.sentence.token.RealToken
 import com.kotlinnlp.morphologicalanalyzer.dictionary.MorphologyDictionary
 import com.kotlinnlp.simplednn.core.embeddings.EmbeddingsMap
 import com.kotlinnlp.simplednn.core.functionalities.activations.Tanh
-import com.kotlinnlp.simplednn.core.functionalities.updatemethods.adam.ADAMMethod
+import com.kotlinnlp.simplednn.core.functionalities.updatemethods.radam.RADAMMethod
 import com.kotlinnlp.simplednn.core.layers.LayerType
 import com.kotlinnlp.simplednn.core.layers.models.merge.mergeconfig.AffineMerge
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
@@ -78,7 +78,7 @@ fun main(args: Array<String>) = mainBody {
     modelFilename = parsedArgs.modelPath,
     dataset = trainingSentences,
     epochs = parsedArgs.epochs,
-    updateMethod = ADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
+    updateMethod = RADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
     evaluator = Evaluator(
       model = model,
       testSentences = testSentences,
