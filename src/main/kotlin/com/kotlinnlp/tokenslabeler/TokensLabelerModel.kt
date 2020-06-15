@@ -35,7 +35,6 @@ import java.io.Serializable
  * @param biRNNHiddenSize the size of the hidden layer of the recurrent network
  * @param biRNNType the type of BiRNN (1 or 2 layers)
  * @property outputLabels the set of output labels
- * @param labelerDropout the dropout of the final output layer
  * @param weightsInitializer the initializer of the weights (zeros if null, default: Glorot)
  * @param biasesInitializer the initializer of the biases (zeros if null, default: null)
  */
@@ -47,7 +46,6 @@ class TokensLabelerModel(
   biRNNHiddenSize: Int,
   biRNNType: BiRNNType = BiRNNType.Single,
   val outputLabels: DictionarySet<Label>,
-  labelerDropout: Double = 0.0,
   weightsInitializer: Initializer? = GlorotInitializer(),
   biasesInitializer: Initializer? = null
 ) : Serializable {
@@ -88,21 +86,16 @@ class TokensLabelerModel(
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderModel.tokenEncodingSize,
-        dropout = inputDropout,
         recurrentConnectionType = biRNNConnectionType,
         hiddenSize = biRNNHiddenSize,
         hiddenActivation = biRNNActivation,
-        outputMergeConfiguration = ConcatFeedforwardMerge(
-          outputSize = this.outputSize,
-          activationFunction = Softmax(),
-          dropout = labelerDropout),
+        outputMergeConfiguration = ConcatFeedforwardMerge(outputSize = this.outputSize, activationFunction = Softmax()),
         weightsInitializer = weightsInitializer,
         biasesInitializer = biasesInitializer))
     BiRNNType.Double -> DeepBiRNN(
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderModel.tokenEncodingSize,
-        dropout = inputDropout,
         recurrentConnectionType = biRNNConnectionType,
         hiddenSize = biRNNHiddenSize,
         hiddenActivation = biRNNActivation,
@@ -111,14 +104,10 @@ class TokensLabelerModel(
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = 2 * biRNNHiddenSize,
-        dropout = inputDropout,
         recurrentConnectionType = biRNNConnectionType,
         hiddenSize = biRNNHiddenSize,
         hiddenActivation = biRNNActivation,
-        outputMergeConfiguration = ConcatFeedforwardMerge(
-          outputSize = this.outputSize,
-          activationFunction = Softmax(),
-          dropout = labelerDropout),
+        outputMergeConfiguration = ConcatFeedforwardMerge(outputSize = this.outputSize, activationFunction = Softmax()),
         weightsInitializer = weightsInitializer,
         biasesInitializer = biasesInitializer))
   }

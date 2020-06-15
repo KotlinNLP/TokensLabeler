@@ -66,9 +66,7 @@ fun main(args: Array<String>) = mainBody {
     biRNNConnectionType = LayerType.Connection.LSTM,
     biRNNActivation = Tanh,
     biRNNHiddenSize = 200,
-    numOfBiRNNLayers = TokensLabelerModel.BiRNNLayersNumber.Single,
-    inputDropout = 0.25,
-    labelerDropout = 0.0,
+    biRNNType = TokensLabelerModel.BiRNNType.Single,
     outputLabels = dictionary.labels)
 
   println("\n-- START TRAINING ON %d SENTENCES".format(trainingSentences.size))
@@ -79,11 +77,11 @@ fun main(args: Array<String>) = mainBody {
     dataset = trainingSentences,
     epochs = parsedArgs.epochs,
     updateMethod = RADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
+    encoderDropout = 0.25,
     evaluator = Evaluator(
       model = model,
       testSentences = testSentences,
       ignoreMissingLabels = parsedArgs.ignoreMissingLabels),
-    useDropout = true,
     verbose = true
   ).train()
 

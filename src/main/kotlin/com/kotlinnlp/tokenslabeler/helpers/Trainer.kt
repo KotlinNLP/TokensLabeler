@@ -30,9 +30,9 @@ import java.io.FileOutputStream
  * @param dataset the training sentences
  * @param epochs the number of training epochs
  * @param updateMethod the update method to optimize the model parameters
+ * @param encoderDropout the dropout probability of the labeler encoder (default 0.0)
  * @param evaluator the helper for the evaluation
  * @param shuffler used to shuffle the examples before each epoch (with pseudo random by default)
- * @param useDropout whether to use the dropout or not  (default = false)
  * @param verbose whether to print info about the training progress and timing (default = true)
  */
 class Trainer(
@@ -41,9 +41,9 @@ class Trainer(
   dataset: List<RealSentence<AnnotatedToken>>,
   epochs: Int,
   updateMethod: UpdateMethod<*> = RADAMMethod(stepSize = 0.001, beta1 = 0.9, beta2 = 0.999),
+  encoderDropout: Double = 0.0,
   evaluator: Evaluator,
   shuffler: Shuffler = Shuffler(),
-  useDropout: Boolean = false,
   verbose: Boolean = true
 ) : Trainer<RealSentence<AnnotatedToken>>(
   modelFilename = modelFilename,
@@ -57,9 +57,9 @@ class Trainer(
 ) {
 
   /**
-   * A frame extractor built with the given [model].
+   * A tokens labeler.
    */
-  private val annotator = TokensLabeler(model = this.model, useDropout = useDropout)
+  private val labeler = TokensLabeler(model = this.model, encoderDropout = encoderDropout)
 
   /**
    * The optimizer of the [model] parameters.
@@ -73,7 +73,7 @@ class Trainer(
    */
   override fun learnFromExample(example: RealSentence<AnnotatedToken>) {
 
-    val output: List<DenseNDArray> = this.annotator.forward(example.asRealTokens())
+    val output: List<DenseNDArray> = this.labeler.forward(example.asRealTokens())
 
     val errors: List<DenseNDArray> = output.zip(example.tokens).map { (distribution, token) ->
 
@@ -82,14 +82,14 @@ class Trainer(
       SoftmaxCrossEntropyCalculator.calculateErrors(output = distribution, goldIndex = goldIndex)
     }
 
-    this.annotator.backward(errors)
+    this.labeler.backward(errors)
   }
 
   /**
    * Accumulate the errors of the model resulting after the call of [learnFromExample].
    */
   override fun accumulateErrors() {
-    this.optimizer.accumulate(this.annotator.getParamsErrors(copy = false), copy = false)
+    this.optimizer.accumulate(this.labeler.getParamsErrors(copy = false), copy = false)
   }
 
   /**

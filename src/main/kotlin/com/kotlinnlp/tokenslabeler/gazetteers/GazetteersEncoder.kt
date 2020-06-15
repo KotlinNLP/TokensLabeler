@@ -27,12 +27,10 @@ import java.lang.RuntimeException
  * The [TokensEncoder] that encodes each token of a sentence using the Gazetteers.
  *
  * @property model the model of this tokens encoder
- * @property useDropout whether to apply the dropout
  * @property id an identification number useful to track a specific processor
  */
 class GazetteersEncoder(
   override val model: GazetteersEncoderModel,
-  override val useDropout: Boolean,
   override val id: Int = 0
 ) : TokensEncoder<RealToken, RealSentence<RealToken>>() {
 
@@ -119,7 +117,7 @@ class GazetteersEncoder(
     /**
      * The number of tokens that compose this entity.
      */
-    val size: Int = this.tokensRange.endInclusive - this.tokensRange.start + 1
+    val size: Int = this.tokensRange.last - this.tokensRange.first + 1
   }
 
   /**
@@ -133,10 +131,8 @@ class GazetteersEncoder(
   /**
    * The feed-forward network used to transform the input from sparse to dense.
    */
-  private val encoder = BatchFeedforwardProcessor<SparseBinaryNDArray>(
-    model = this.model.denseEncoder,
-    useDropout = this.useDropout,
-    propagateToInput = false)
+  private val encoder: BatchFeedforwardProcessor<SparseBinaryNDArray> =
+    BatchFeedforwardProcessor(model = this.model.denseEncoder, propagateToInput = false)
 
   /**
    * Encode a list of tokens.
@@ -261,17 +257,17 @@ class GazetteersEncoder(
         if (entity.size == 1) {
 
           val index: Int = EntityType.Factory(pos = pos, position = TokenEntityPosition.U).index
-          activeIndicesPerToken[entity.tokensRange.start].add(index)
+          activeIndicesPerToken[entity.tokensRange.first].add(index)
 
         } else {
 
           val beginIndex: Int = EntityType.Factory(pos = pos, position = TokenEntityPosition.B).index
-          activeIndicesPerToken[entity.tokensRange.start].add(beginIndex)
+          activeIndicesPerToken[entity.tokensRange.first].add(beginIndex)
 
           val endIndex: Int = EntityType.Factory(pos = pos, position = TokenEntityPosition.E).index
-          activeIndicesPerToken[entity.tokensRange.endInclusive].add(endIndex)
+          activeIndicesPerToken[entity.tokensRange.last].add(endIndex)
 
-          (entity.tokensRange.start + 1 until entity.tokensRange.endInclusive).forEach { tokenIndex ->
+          (entity.tokensRange.first + 1 until entity.tokensRange.last).forEach { tokenIndex ->
             val insideIndex: Int = EntityType.Factory(pos = pos, position = TokenEntityPosition.I).index
             activeIndicesPerToken[tokenIndex].add(insideIndex)
           }

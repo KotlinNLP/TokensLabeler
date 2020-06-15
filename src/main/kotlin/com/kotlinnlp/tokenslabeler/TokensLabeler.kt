@@ -14,6 +14,7 @@ import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
+import com.kotlinnlp.tokensencoder.TokensEncoder
 import com.kotlinnlp.tokenslabeler.helpers.LabelsDecoder
 import com.kotlinnlp.tokenslabeler.language.ScoredLabel
 import com.kotlinnlp.tokenslabeler.language.IOBTag
@@ -23,13 +24,15 @@ import com.kotlinnlp.tokenslabeler.language.Segment
  * The Tokens Labeler.
  *
  * @property model the model
+ * @param encoderDropout the dropout probability of the hidden encoder (default 0.0)
+ * @param outputMergeDropout the dropout probability of the output merge layer (default 0.0)
  * @property id the id used for the pool (default 0)
- * @property useDropout whether to use the dropout or not (default false)
  */
 class TokensLabeler(
   val model: TokensLabelerModel,
-  override val id: Int = 0,
-  override val useDropout: Boolean = false
+  encoderDropout: Double = 0.0,
+  outputMergeDropout: Double = 0.0,
+  override val id: Int = 0
 ) : NeuralProcessor<
   RealSentence<RealToken>, // InputType
   List<DenseNDArray>, // OutputType
@@ -83,14 +86,16 @@ class TokensLabeler(
   /**
    * A new instance of the tokens encoder.
    */
-  private val tokensEncoder = this.model.tokensEncoderModel.buildEncoder(useDropout = this.useDropout)
+  private val tokensEncoder: TokensEncoder<RealToken, RealSentence<RealToken>> =
+    this.model.tokensEncoderModel.buildEncoder()
 
   /**
-   * A new instance of the processor of the biRNN.
+   * The BiRNN hidden encoder.
    */
   private val biRNNProcessor = DeepBiRNNEncoder<DenseNDArray>(
     network = this.model.biRNN,
-    useDropout = this.useDropout,
+    rnnDropout = encoderDropout,
+    mergeDropout = outputMergeDropout,
     propagateToInput = true)
 
   /**
