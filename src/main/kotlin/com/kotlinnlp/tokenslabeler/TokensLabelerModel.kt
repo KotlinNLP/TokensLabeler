@@ -33,8 +33,7 @@ import java.io.Serializable
  * @param biRNNConnectionType type of recurrent neural network (e.g. LSTM, GRU, CFN, SimpleRNN)
  * @param biRNNActivation the activation function of the hidden layer
  * @param biRNNHiddenSize the size of the hidden layer of the recurrent network
- * @param numOfBiRNNLayers the number of stacked BiRNNs (default 1)
- * @param inputDropout the probability of the recurrent dropout (default 0.0)
+ * @param biRNNType the type of BiRNN (1 or 2 layers)
  * @property outputLabels the set of output labels
  * @param labelerDropout the dropout of the final output layer
  * @param weightsInitializer the initializer of the weights (zeros if null, default: Glorot)
@@ -46,8 +45,7 @@ class TokensLabelerModel(
   biRNNConnectionType: LayerType.Connection,
   biRNNActivation: ActivationFunction?,
   biRNNHiddenSize: Int,
-  numOfBiRNNLayers: BiRNNLayersNumber = BiRNNLayersNumber.Single,
-  inputDropout: Double = 0.0,
+  biRNNType: BiRNNType = BiRNNType.Single,
   val outputLabels: DictionarySet<Label>,
   labelerDropout: Double = 0.0,
   weightsInitializer: Initializer? = GlorotInitializer(),
@@ -55,9 +53,9 @@ class TokensLabelerModel(
 ) : Serializable {
 
   /**
-   * The number of stacked BiRNNs.
+   * The BiRNN type, with 1 or 2 stacked BiRNNs.
    */
-  enum class BiRNNLayersNumber { Single, Double }
+  enum class BiRNNType { Single, Double }
 
   companion object {
 
@@ -78,15 +76,15 @@ class TokensLabelerModel(
   }
 
   /**
-   * The [biRNN] output size coincides with the number of output labels
+   * The [biRNN] output size is equal to the number of output labels.
    */
   private val outputSize: Int = this.outputLabels.getElements().size
 
   /**
-   * The BiRNN.
+   * The BiRNN for the hidden encoding.
    */
-  val biRNN = if (numOfBiRNNLayers == BiRNNLayersNumber.Single) {
-    DeepBiRNN(
+  val biRNN: DeepBiRNN = when (biRNNType) {
+    BiRNNType.Single -> DeepBiRNN(
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderModel.tokenEncodingSize,
@@ -100,8 +98,7 @@ class TokensLabelerModel(
           dropout = labelerDropout),
         weightsInitializer = weightsInitializer,
         biasesInitializer = biasesInitializer))
-  } else {
-    DeepBiRNN(
+    BiRNNType.Double -> DeepBiRNN(
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderModel.tokenEncodingSize,
@@ -113,7 +110,7 @@ class TokensLabelerModel(
         biasesInitializer = biasesInitializer),
       BiRNN(
         inputType = LayerType.Input.Dense,
-        inputSize = biRNNHiddenSize * 2,
+        inputSize = 2 * biRNNHiddenSize,
         dropout = inputDropout,
         recurrentConnectionType = biRNNConnectionType,
         hiddenSize = biRNNHiddenSize,
