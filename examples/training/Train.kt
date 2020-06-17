@@ -15,13 +15,15 @@ import com.kotlinnlp.simplednn.core.embeddings.EmbeddingsMap
 import com.kotlinnlp.simplednn.core.functionalities.activations.Tanh
 import com.kotlinnlp.simplednn.core.functionalities.updatemethods.radam.RADAMMethod
 import com.kotlinnlp.simplednn.core.layers.LayerType
-import com.kotlinnlp.simplednn.core.layers.models.merge.mergeconfig.AffineMerge
+import com.kotlinnlp.simplednn.deeplearning.transformers.BERTModel
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
+import com.kotlinnlp.tokensencoder.bert.BERTEncoderModel
 import com.kotlinnlp.tokensencoder.charactersbirnn.CharsBiRNNEncoderModel
 import com.kotlinnlp.tokensencoder.embeddings.EmbeddingsEncoderModel
 import com.kotlinnlp.tokensencoder.embeddings.keyextractor.NormWordKeyExtractor
 import com.kotlinnlp.tokensencoder.embeddings.keyextractor.WordKeyExtractor
 import com.kotlinnlp.tokensencoder.ensemble.EnsembleTokensEncoderModel
+import com.kotlinnlp.tokensencoder.reduction.ReductionEncoderModel
 import com.kotlinnlp.tokensencoder.wrapper.TokensEncoderWrapperModel
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.gazetteers.GazetteersEncoderModel
@@ -110,13 +112,14 @@ fun main(args: Array<String>) = mainBody {
 private fun buildTokensEncoderModel(
   parsedArgs: CommandLineArguments,
   trainingSentences: List<RealSentence<AnnotatedToken>>
-): TokensEncoderModel<RealToken, RealSentence<RealToken>> = EnsembleTokensEncoderModel(
-  components = listOfNotNull(
-    buildEmbeddingsEncoderComponent(parsedArgs),
-    buildCharsEncoderComponent(trainingSentences),
-    buildGazetteersEncoderModel(parsedArgs)
-  ),
-  outputMergeConfiguration = AffineMerge(outputSize = parsedArgs.tokensEncodingSize, activationFunction = null))
+): TokensEncoderModel<RealToken, RealSentence<RealToken>> = ReductionEncoderModel(
+  inputEncoderModel = BERTEncoderModel(bert = parsedArgs.bertModelPath.let {
+    println("Reading BERT model from '$it'...")
+    BERTModel.load(FileInputStream(it))
+  }),
+  tokenEncodingSize = parsedArgs.tokensEncodingSize,
+  optimizeInput = false,
+  activationFunction = null)
 
 /**
  * @param parsedArgs the parsed command line arguments
@@ -127,7 +130,7 @@ private fun buildEmbeddingsEncoderComponent(parsedArgs: CommandLineArguments) =
   EnsembleTokensEncoderModel.ComponentModel(
     model = TokensEncoderWrapperModel(
       model = EmbeddingsEncoderModel.Base(
-        embeddingsMap = EmbeddingsMap.load(parsedArgs.embeddingsPath),
+        embeddingsMap = EmbeddingsMap.load(parsedArgs.embeddingsPath!!),
         embeddingKeyExtractor = WordKeyExtractor(),
         fallbackEmbeddingKeyExtractors = listOf(NormWordKeyExtractor()),
         dropout = 0.0),

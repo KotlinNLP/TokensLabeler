@@ -77,6 +77,15 @@ class CommandLineArguments(args: Array<String>) {
   )
 
   /**
+   * The file path of the serialized BERT model.
+   */
+  val bertModelPath: String by parser.storing(
+    "-b",
+    "--bert",
+    help="the file path of the serialized BERT model"
+  )
+
+  /**
    * The file path of the serialized gazetteers dictionary.
    */
   val gazetteersPath: String? by parser.storing(
@@ -88,11 +97,11 @@ class CommandLineArguments(args: Array<String>) {
   /**
    * The path of the pre-trained word embeddings.
    */
-  val embeddingsPath: String by parser.storing(
+  val embeddingsPath: String? by parser.storing(
     "-w",
     "--embeddings",
     help="the path of the pre-trained word embeddings"
-  )
+  ).default { null }
 
   /**
    * The size of the word embedding vectors.
