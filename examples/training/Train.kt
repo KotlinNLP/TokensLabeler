@@ -115,7 +115,7 @@ private fun buildTokensEncoderModel(
 ): TokensEncoderModel<RealToken, RealSentence<RealToken>> = ReductionEncoderModel(
   inputEncoderModel = BERTEncoderModel(bert = parsedArgs.bertModelPath.let {
     println("Reading BERT model from '$it'...")
-    BERTModel.load(FileInputStream(it))
+    BERTModel.load(FileInputStream(it)).also { m -> m.reduceLayersTo(6) }
   }),
   tokenEncodingSize = parsedArgs.tokensEncodingSize,
   optimizeInput = false,
