@@ -15,7 +15,7 @@
         <assembly-plugin.version>2.6</assembly-plugin.version>
         <kotlin.version>1.3.31</kotlin.version>
         <klaxon.version>5.2</klaxon.version>
-        <tokenslabeler.version>0.2.3</tokenslabeler.version>
+        <tokenslabeler.version>0.2.4</tokenslabeler.version>
     </properties>
 
     <repositories>
