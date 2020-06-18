@@ -16,10 +16,15 @@ import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.*
 import com.kotlinnlp.utils.pmapIndexed
 import com.xenomachina.argparser.mainBody
+import parseAsBase64
+import readInput
+import java.io.File
 import java.io.FileInputStream
 
 /**
- * Get the labeling of a text inserted from the standard input.
+ * Get the labeling of a text inserted from the standard input or parsed from a document.
+ * If the inserted text is an existing path, then the referenced document is read and the textual content is parsed
+ * using Apache Tika.
  *
  * Launch with the '-h' option for help about the command line arguments.
  */
@@ -41,13 +46,9 @@ fun main(args: Array<String>) = mainBody {
 
   while (true) {
 
-    val inputText = readValue()
+    readInput()?.let {
 
-    if (inputText.isEmpty()) {
-
-      break
-
-    } else {
+      val inputText: String = if (File(it).exists()) parseAsBase64(it) else it
 
       tokenizer.tokenize(inputText).pmapIndexed(parsedArgs.parallelization) { i, sentence ->
 
@@ -56,20 +57,9 @@ fun main(args: Array<String>) = mainBody {
 
         println(sentence.annotate(labelers[i].predict(sentence)).toString() + "\n")
       }
-    }
+
+    } ?: break
   }
 
   println("\nExiting...")
-}
-
-/**
- * Read a value from the standard input.
- *
- * @return the string read
- */
-private fun readValue(): String {
-
-  print("\nLabel a text (empty to exit): ")
-
-  return readLine()!!
 }
