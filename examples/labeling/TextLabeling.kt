@@ -14,30 +14,28 @@ import com.kotlinnlp.neuraltokenizer.NeuralTokenizerModel
 import com.kotlinnlp.tokenslabeler.TokensLabeler
 import com.kotlinnlp.tokenslabeler.TokensLabelerModel
 import com.kotlinnlp.tokenslabeler.language.*
-import java.io.File
+import com.kotlinnlp.utils.pmapIndexed
+import com.xenomachina.argparser.mainBody
 import java.io.FileInputStream
 
 /**
- * A simple example to get the labeling of a text entered from the standard input.
+ * Get the labeling of a text inserted from the standard input.
  *
- * Command line arguments:
- *   1. The file path of the tokenizer serialized model.
- *   2. The file path of the labeler serialized model.
+ * Launch with the '-h' option for help about the command line arguments.
  */
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = mainBody {
 
-  require(args.size == 2) {
-    "Required 2 arguments: <tokenizer_model_filename> <labeler_model_filename>."
-  }
+  val parsedArgs = CommandLineArguments(args)
 
-  val tokenizer: NeuralTokenizer = args[0].let {
+  val tokenizer: NeuralTokenizer = parsedArgs.tokenizerModelPath.let {
     println("Loading tokenizer model from '$it'...")
-    NeuralTokenizer(NeuralTokenizerModel.load(FileInputStream(File(it))))
+    NeuralTokenizer(NeuralTokenizerModel.load(FileInputStream(it)))
   }
-  val labeler: TokensLabeler = args[1].let {
+  val labelerModel: TokensLabelerModel = parsedArgs.labelerModelPath.let {
     println("Loading labeler model from '$it'...")
-    TokensLabeler(TokensLabelerModel.load(FileInputStream(File(it))))
+    TokensLabelerModel.load(FileInputStream(it))
   }
+  val labelers: List<TokensLabeler> = List(parsedArgs.parallelization) { TokensLabeler(labelerModel) }
 
   while (true) {
 
@@ -49,12 +47,12 @@ fun main(args: Array<String>) {
 
     } else {
 
-      tokenizer.tokenize(inputText).forEach { sentence ->
+      tokenizer.tokenize(inputText).pmapIndexed(parsedArgs.parallelization) { i, sentence ->
 
         @Suppress("UNCHECKED_CAST")
         sentence as RealSentence<RealToken>
 
-        println(sentence.annotate(labeler.predict(sentence)).toString() + "\n")
+        println(sentence.annotate(labelers[i].predict(sentence)).toString() + "\n")
       }
     }
   }
