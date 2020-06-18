@@ -37,6 +37,8 @@ fun main(args: Array<String>) = mainBody {
   }
   val labelers: List<TokensLabeler> = List(parsedArgs.parallelization) { TokensLabeler(labelerModel) }
 
+  println("Parallelization: ${parsedArgs.parallelization}")
+
   while (true) {
 
     val inputText = readValue()
