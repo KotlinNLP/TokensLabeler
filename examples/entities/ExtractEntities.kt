@@ -53,7 +53,7 @@ fun main(args: Array<String>) = mainBody {
       val inputText: String = if (File(input).exists()) parseAsBase64(input) else input
       val timer = Timer()
 
-      val entities: Set<Entity> = extractEntities(
+      val entities: List<Entity> = extractEntities(
         text = inputText,
         parallelization = parsedArgs.parallelization,
         tokenizer = tokenizer,
@@ -110,7 +110,7 @@ private data class Entity(val type: String, val value: String, val score: Double
 private fun extractEntities(text: String,
                             parallelization: Int,
                             tokenizer: NeuralTokenizer,
-                            labelers: List<TokensLabeler>): Set<Entity> =
+                            labelers: List<TokensLabeler>): List<Entity> =
   tokenizer.tokenize(text)
     .pmapIndexed(parallelization) { i, sentence ->
 
@@ -125,4 +125,7 @@ private fun extractEntities(text: String,
       }
     }
     .flatten()
-    .toSet()
+    .groupBy { Pair(it.type, it.value) }
+    .map { (_, entitiesGroup) ->
+      entitiesGroup.first().copy(score = entitiesGroup.sumByDouble { it.score } / entitiesGroup.size) // scores avg
+    }
